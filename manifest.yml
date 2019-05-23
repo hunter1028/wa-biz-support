@@ -3,7 +3,7 @@ declared-services:
   Watson Assistant-ql:
     label: assistant
     plan: free
-  Text to Speech-vb:
+  TTS-17751646:
     label: text_to_speech
     plan: lite
   Speech to Text-to:
@@ -22,7 +22,7 @@ applications:
   random-route: true
   services:
   - Speech to Text-to
-  - Text to Speech-vb
+  - TTS-17751646
   - Watson Assistant-ql
 env:
   WORKSPACE_ID: bc201211-ffd4-4a35-95b2-e0e4408a7729
