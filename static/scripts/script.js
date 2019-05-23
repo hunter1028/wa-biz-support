@@ -56,6 +56,8 @@ $(document).ready(function() {
   })
     .done(function(res) {
       conversationContext = res.results.context;
+      var vvv = res.results.responseOpt;
+      alert(vvv);
       displayMsgDiv(res.results.responseText, 'bot');
       play(res.results.responseText);
     })

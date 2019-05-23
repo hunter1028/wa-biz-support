@@ -16,13 +16,14 @@ applications:
   instances: 1
   name: watson-assitant-biz-support
   host: watson-assitant-biz-support
+  command: python manage.py start 0.0.0.0:$PORT
   disk_quota: 512M
   buildpack: https://github.com/cloudfoundry/python-buildpack.git
   random-route: true
-#  services:
-#  - Speech to Text-to
-#  - Text to Speech-vb
-#  - Watson Assistant-ql
+  services:
+  - Speech to Text-to
+  - Text to Speech-vb
+  - Watson Assistant-ql
 env:
   WORKSPACE_ID: placeholder
   ASSISTANT_IAM_APIKEY: placeholder

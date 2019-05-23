@@ -113,9 +113,13 @@ def getConvResponse():
         print(e)
 
     response = response.get_result()
-    print(json.dumps(response,indent=2))
-      
+   
+    json_data = json.dumps(response,indent=2)
     
+    print(json_data)
+      
+    r_type =  response["output"]["generic"][0]["response_type"]
+    print('-----------------------'+r_type)
     reponseText = response["output"]["text"]
     
 #     reponseOption = response["output"]["option"]
@@ -125,8 +129,11 @@ def getConvResponse():
     str_response = ''
     if len(reponseText) > 0 :
         str_response = reponseText[0]
-    
+        
+    str_option = response["output"]["generic"][0]["option"]
+            
     responseDetails = {'responseText': str_response,
+                       'responseOpt': str_option,
                        'context': response["context"]}
     
     print(jsonify(results=responseDetails))
