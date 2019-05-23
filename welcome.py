@@ -105,7 +105,7 @@ def getConvResponse():
         if convContext is None:
             convContext = "{}"
         jsonContext = json.loads(convContext)
-
+        return jsonify(workspace_id)
         response = assistant.message(workspace_id=workspace_id,
                                      input={'text': convText},
                                      context=jsonContext)
