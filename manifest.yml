@@ -16,7 +16,7 @@ applications:
   instances: 1
   name: watson-assitant-biz-support
   host: watson-assitant-biz-support
-  command: python manage.py start 0.0.0.0:$PORT
+  command: python welcome.py start 0.0.0.0:$PORT
   disk_quota: 512M
   buildpack: https://github.com/cloudfoundry/python-buildpack.git
   random-route: true
