@@ -133,7 +133,7 @@ def getConvResponse():
     #str_option = response["output"]["generic"][0]["option"]
             
     responseDetails = {'responseText': str_response,
-                       'responseOpt': str_option,
+#                        'responseOpt': str_option,
                        'context': response["context"]}
     
     print(jsonify(results=responseDetails))
