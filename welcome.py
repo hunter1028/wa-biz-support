@@ -88,29 +88,29 @@ def Welcome():
 def getConvResponse():
     # Instantiate Watson Assistant client.
     # only give a url if we have one (don't override the default)
-    try:
-        assistant_kwargs = {
-            'version': '2018-09-20',
-            'username': assistantUsername,
-            'password': assistantPassword,
-            'iam_apikey': assistantIAMKey,
-            'url': assistantUrl
-        }
+#     try:
+    assistant_kwargs = {
+        'version': '2018-09-20',
+        'username': assistantUsername,
+        'password': assistantPassword,
+        'iam_apikey': assistantIAMKey,
+        'url': assistantUrl
+    }
 
-        assistant = AssistantV1(**assistant_kwargs)
+    assistant = AssistantV1(**assistant_kwargs)
 
-        convText = request.form.get('convText')
-        convContext = request.form.get('context')
+    convText = request.form.get('convText')
+    convContext = request.form.get('context')
 
-        if convContext is None:
-            convContext = "{}"
-        jsonContext = json.loads(convContext)
-        return jsonify(workspace_id)
-        response = assistant.message(workspace_id=workspace_id,
-                                     input={'text': convText},
-                                     context=jsonContext)
-    except Exception as e:
-        print(e)
+    if convContext is None:
+        convContext = "{}"
+    jsonContext = json.loads(convContext)
+
+    response = assistant.message(workspace_id=workspace_id,
+                                 input={'text': convText},
+                                 context=jsonContext)
+#     except Exception as e:
+#         print(e)
 
     response = response.get_result()
    
