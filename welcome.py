@@ -130,7 +130,7 @@ def getConvResponse():
     if len(reponseText) > 0 :
         str_response = reponseText[0]
         
-    str_option = response["output"]["generic"][0]["option"]
+    #str_option = response["output"]["generic"][0]["option"]
             
     responseDetails = {'responseText': str_response,
                        'responseOpt': str_option,
