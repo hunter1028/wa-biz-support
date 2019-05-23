@@ -1,12 +1,12 @@
 ---
 declared-services:
-  wvb-conversation-service:
-    label: conversation
+  Watson Assistant-ql:
+    label: assistant
     plan: free
-  wvb-texttospeech-service:
+  Text to Speech-vb:
     label: text_to_speech
     plan: lite
-  wvb-speechtotext-service:
+  Speech to Text-to:
     label: speech_to_text
     plan: lite
 
@@ -25,5 +25,5 @@ applications:
   - Text to Speech-vb
   - Watson Assistant-ql
 env:
-  WORKSPACE_ID: placeholder
-  ASSISTANT_IAM_APIKEY: placeholder
+  WORKSPACE_ID: bc201211-ffd4-4a35-95b2-e0e4408a7729
+  ASSISTANT_IAM_APIKEY: cO4XTEJifNmWlKOFAkNa0k3mSPFPX6Jlr6vdriG96nkM
