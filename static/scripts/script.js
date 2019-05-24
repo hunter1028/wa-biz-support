@@ -23,10 +23,10 @@ function displayMsgDiv(content, type, who) {
   }
   
   if(typeof content == 'string'){
-	  msgHtml += "<div class='jss24'>";
+//	  msgHtml += "<div class='jss24'>";
 	  display_v = content.replace(/(\r\n)|(\n)/g,'<br>');
 	  msgHtml += display_v;
-	  msgHtml += "</div>";
+//	  msgHtml += "</div>";
   }else if (typeof content == 'object') {
 	  if(type == 'text'){
 		  msgHtml += "<div class='jss24'>";
@@ -134,8 +134,8 @@ function callConversation(res) {
   })
     .done(function(res, status) {
       conversationContext = res.results.context;
-      play(res.results.responseText);
-      displayMsgDiv(res.results.responseText, 'bot');
+//      play(res.results.responseText);
+      displayMsgDiv(res.results.reponseContent, res.results.responseType,'bot');
     })
     .fail(function(jqXHR, e) {
       console.log('Error: ' + jqXHR.responseText);
