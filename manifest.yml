@@ -14,8 +14,8 @@ applications:
 - path: .
   memory: 128M
   instances: 1
-  name: watson-assitant-biz-support
-  host: watson-assitant-biz-support
+  name: wa-biz-suuport
+  host: wa-biz-suuport
   command: python welcome.py
   disk_quota: 512M
   buildpack: https://github.com/cloudfoundry/python-buildpack.git
