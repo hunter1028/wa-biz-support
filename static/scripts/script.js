@@ -239,6 +239,8 @@ function stopRecording(button) {
     		  displayMsgDiv('聞き取れませんでした。もう一度お試しください。', 'text', 'bot');
     		  
     	  }
+    	  
+    	  
         
         
       };
