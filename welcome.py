@@ -88,29 +88,29 @@ def Welcome():
 def getConvResponse():
     # Instantiate Watson Assistant client.
     # only give a url if we have one (don't override the default)
-#     try:
-    assistant_kwargs = {
-        'version': '2018-09-20',
-        'username': assistantUsername,
-        'password': assistantPassword,
-        'iam_apikey': assistantIAMKey,
-        'url': assistantUrl
-    }
-
-    assistant = AssistantV1(**assistant_kwargs)
-
-    convText = request.form.get('convText')
-    convContext = request.form.get('context')
-
-    if convContext is None:
-        convContext = "{}"
-    jsonContext = json.loads(convContext)
-
-    response = assistant.message(workspace_id=workspace_id,
-                                 input={'text': convText},
-                                 context=jsonContext)
-#     except Exception as e:
-#         print(e)
+    try:
+        assistant_kwargs = {
+            'version': '2018-09-20',
+            'username': assistantUsername,
+            'password': assistantPassword,
+            'iam_apikey': assistantIAMKey,
+            'url': assistantUrl
+        }
+    
+        assistant = AssistantV1(**assistant_kwargs)
+    
+        convText = request.form.get('convText')
+        convContext = request.form.get('context')
+    
+        if convContext is None:
+            convContext = "{}"
+        jsonContext = json.loads(convContext)
+    
+        response = assistant.message(workspace_id=workspace_id,
+                                     input={'text': convText},
+                                     context=jsonContext)
+    except Exception as e:
+        print(e)
 
     response = response.get_result()
    
@@ -119,24 +119,20 @@ def getConvResponse():
     print(json_data)
       
     r_type =  response["output"]["generic"][0]["response_type"]
-    print('-----------------------'+r_type)
-    reponseText = response["output"]["text"]
     
-#     reponseOption = response["output"]["option"]
+    # set reponseContent by response_type
+    if r_type == 'text' :
+        reponseContent = response["output"]["text"]
+    else:
+        reponseContent = response["output"]["generic"][0]
     
-    print(reponseText)
-    
-    str_response = ''
-    if len(reponseText) > 0 :
-        str_response = reponseText[0]
-        
-    #str_option = response["output"]["generic"][0]["option"]
+    # print reponseContent
+    print(reponseContent)
             
-    responseDetails = {'responseText': str_response,
-#                        'responseOpt': str_option,
+    responseDetails = {'responseType': r_type,
+                       'reponseContent': reponseContent,
                        'context': response["context"]}
     
-    print(jsonify(results=responseDetails))
     
     return jsonify(results=responseDetails)
 

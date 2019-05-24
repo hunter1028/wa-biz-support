@@ -2,7 +2,7 @@ let conversationContext = '';
 let recorder;
 let context;
 
-function displayMsgDiv(str, who) {
+function displayMsgDiv(content, type, who) {
   const time = new Date();
   let hours = time.getHours();
   let minutes = time.getMinutes();
@@ -12,21 +12,44 @@ function displayMsgDiv(str, who) {
   hours = hours < 10 ? '0' + hours : hours;
   minutes = minutes < 10 ? '0' + minutes : minutes;
   const strTime = hours + ':' + minutes + ' ' + ampm;
-// who_color = who+'_color';
+
   let msgHtml = "";
-// let msgHtml = "<div class='msg-card-wide mdl-card " + who + "'><div
-// class='mdl-card__supporting-text " + who_color + "'>";
+  let display_v = "";
+
   if (who == 'bot') {
-	   msgHtml = "<div class='jss17'><img src='./static/img/help.png' class='jss20'>	<div class='jss23'>	<div class='jss24'>";
+	   msgHtml = "<div class='jss17'><img src='./static/img/help.png' class='jss20'>	<div class='jss23'>	";
   }else{
 	  msgHtml = "<div class='jss18'><div class='jss21'>";
   }
   
-  str = str.replace(/(\r\n)|(\n)/g,'<br>'); 
-  msgHtml += str;
+  if(typeof content == 'string'){
+	  display_v = content.replace(/(\r\n)|(\n)/g,'<br>');
+	  msgHtml += display_v;
+  }else if (typeof content == 'object') {
+	  if(type == 'text'){
+		  msgHtml += "<div class='jss24'>";
+		  display_v =content[0].replace(/(\r\n)|(\n)/g,'<br>');
+		  msgHtml += display_v;
+		  msgHtml += "</div>";
+	  }else{
+		  msgHtml += "<div class='jss25'>";
+		  msgHtml += content.title;
+		  msgHtml += "</div>";
+		  
+		 
+		  for(var i=0;i<content.options.length;i++){
+			  msgHtml += "<div class='jss26' onclick='sendMessage($(this).html())'>";
+			  display_v +=  content.options[i].value.input.text;
+			  msgHtml += display_v+ "</div>";
+			  display_v = "";
+		      
+		  } 
+	  }
+  }
+
 // msgHtml += "</div><div class='" + who + "-line'>" + strTime + '</div></div>';
   if (who == 'bot') {
-	  msgHtml += "</div></div></div>";
+	  msgHtml += "</div></div>";
   }else{
 	  msgHtml += "</div></div>";
   }
@@ -56,8 +79,8 @@ $(document).ready(function() {
   })
     .done(function(res) {
       conversationContext = res.results.context;
-      displayMsgDiv(res.results.responseText, 'bot');
-      play(res.results.responseText);
+      displayMsgDiv(res.results.reponseContent,　res.results.responseType,  'bot');
+// play(res.results.responseText);
     })
     .fail(function(jqXHR, e) {
       console.log('Error: ' + jqXHR.responseText);
@@ -72,43 +95,32 @@ function clickEnter(){
 	
 	if(code == 13){
 		var message = $('#q').val().trim();
-		
-		if(message==''){
-			return;
-		}
-		displayMsgDiv(message, 'user');
-		
-	     var form = new FormData();
-         form.append("convText","message");
-//         form.append("password",123456);
-         var req = new XMLHttpRequest();
-         
-//         req.open("post", "${pageContext.request.contextPath}/public/testupload", false);
-//         req.send(form);
-         
-//         
-		 
-//		  $.ajax({
-//			    url: '/api/conversation',
-//			    convText: message,
-//			    context: JSON.stringify(conversationContext)
-//			  })
-			    $.post('/api/conversation', {
-			    		convText: message,
-			    		context: JSON.stringify(conversationContext)
-			    	})
-			    .done(function(res) {
-			      conversationContext = res.results.context;
-			      play(res.results.responseText);
-			      displayMsgDiv(res.results.responseText, 'bot');
-			    })
-			    .fail(function(jqXHR, e) {
-			      console.log('Error: ' + jqXHR.responseText);
-			    });
-		  
+		sendMessage(message)
 		 $('#q').val('');
-		  
+}
+}	
+function sendMessage(message){
+	if(message==''){
+		return;
 	}
+	displayMsgDiv(message, 'user');
+	
+     var form = new FormData();
+     form.append("convText","message");
+     var req = new XMLHttpRequest();
+     
+		    $.post('/api/conversation', {
+		    		convText: message,
+		    		context: JSON.stringify(conversationContext)
+		    	})
+		    .done(function(res) {
+		      conversationContext = res.results.context;
+//play(res.results.responseText);
+		      displayMsgDiv(res.results.reponseContent,res.results.responseType, 'bot');
+		    })
+		    .fail(function(jqXHR, e) {
+		      console.log('Error: ' + jqXHR.responseText);
+		    });
 }
 
 function callConversation(res) {
@@ -231,11 +243,25 @@ window.onload = function init() {
   try {
     // webkit shim
     window.AudioContext = window.AudioContext || window.webkitAudioContext;
-    navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia;
+    navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia ||navigator.msGetUserMedia;
+    
+    var constraints = {audio: true};
+    
+// var aaa = navigator.mediaDevices.getUserMedia(constraints);
+// aelrt(aa);
+// .then(alert('OK'))
+// .catch(alert('NG'));
+    
+    
+    
     // eslint-disable-next-line
     window.URL = window.URL || window.webkitURL;
-
-    context = new AudioContext();
+// document.querySelector('button').addEventListener('click', function() {
+    	   context = new AudioContext();
+    	  // Setup all nodes
+// ...
+// });
+// context = new AudioContext();
     console.log('Audio context set up.');
     console.log('navigator.getUserMedia ' + (navigator.getUserMedia ? 'available.' : 'not present!'));
   } catch (e) {
