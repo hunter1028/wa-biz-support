@@ -205,15 +205,8 @@ recordMic.onclick = function() {
 };
 
 function startUserMedia(stream) {
-  const input = context.createMediaStreamSource(stream);
-  console.log('Media stream created.');
-  // Uncomment if you want the audio to feedback directly
-  // input.connect(audio_context.destination);
-  // console.log('Input connected to audio context destination.');
-
-  // eslint-disable-next-line
-  recorder = new Recorder(input);
-  console.log('Recorder initialised.');
+  
+ 
 }
 
 function startRecording(button) {
@@ -243,10 +236,6 @@ function stopRecording(button) {
     		  displayMsgDiv('聞き取れませんでした。もう一度お試しください。', 'text', 'bot');
     		  
     	  }
-    	  
-    	  
-        
-        
       };
       request.send(blob);
     });
@@ -257,39 +246,37 @@ function stopRecording(button) {
 window.onload = function init() {
   try {
     // webkit shim
-    window.AudioContext = window.AudioContext || window.webkitAudioContext;
+   
     navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia ||navigator.msGetUserMedia;
     
     var constraints = {audio: true};
     
-// var aaa = navigator.mediaDevices.getUserMedia(constraints);
-// aelrt(aa);
-// .then(alert('OK'))
-// .catch(alert('NG'));
-    
-    
-    
-    // eslint-disable-next-line
-    window.URL = window.URL || window.webkitURL;
-// document.querySelector('button').addEventListener('click', function() {
-    	   context = new AudioContext();
-    	  // Setup all nodes
-// ...
-// });
-// context = new AudioContext();
+
+    	 
     console.log('Audio context set up.');
-    console.log('navigator.getUserMedia ' + (navigator.getUserMedia ? 'available.' : 'not present!'));
+    //console.log('navigator.getUserMedia ' + (navigator.getUserMedia ? 'available.' : 'not present!'));
   } catch (e) {
     alert('No web audio support in this browser!');
   }
+  
+  navigator.mediaDevices.getUserMedia(constraints)
+  .then(function (stream){
+	  window.AudioContext = window.AudioContext || window.webkitAudioContext;
+	  window.URL = window.URL || window.webkitURL;
+	  context = new AudioContext();
+	  const input = context.createMediaStreamSource(stream);
+	  console.log('Media stream created.');
+	  // Uncomment if you want the audio to feedback directly
+	  // input.connect(audio_context.destination);
+	  // console.log('Input connected to audio context destination.');
 
-  navigator.getUserMedia(
-    {
-      audio: true
-    },
-    startUserMedia,
-    function(e) {
-      console.log('No live audio input: ' + e);
-    }
-  );
+	  // eslint-disable-next-line
+	  recorder = new Recorder(input);
+	  console.log('Recorder initialised.');
+	  
+  })
+  .catch(function(e) {
+	  console.log('No live audio input: ' + e);
+  });
+
 };
