@@ -23,8 +23,10 @@ function displayMsgDiv(content, type, who) {
   }
   
   if(typeof content == 'string'){
+	  msgHtml += "<div class='jss24'>";
 	  display_v = content.replace(/(\r\n)|(\n)/g,'<br>');
 	  msgHtml += display_v;
+	  msgHtml += "</div>";
   }else if (typeof content == 'object') {
 	  if(type == 'text'){
 		  msgHtml += "<div class='jss24'>";
@@ -187,7 +189,7 @@ recordMic.onclick = function() {
       startRecording();
       console.log('recorder started');
       $('#q').val('');
-      $('#q').attr('placeholder','聞いております...');
+      $('#q').attr('placeholder','お話しください。聞いております...');
     } catch (ex) {
       // console.log("Recognizer error .....");
     }
@@ -230,8 +232,15 @@ function stopRecording(button) {
 
       // Decode asynchronously
       request.onload = function() {
-        displayMsgDiv(request.response, 'user');
-        callConversation(request.response);
+    	  if(request.response.trim() != ''){
+    		  displayMsgDiv(request.response, 'user');
+    		  callConversation(request.response);
+    	  }else{
+    		  displayMsgDiv('聞き取れませんでした。もう一度お試しください。', 'text', 'bot');
+    		  
+    	  }
+        
+        
       };
       request.send(blob);
     });

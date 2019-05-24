@@ -106,6 +106,8 @@ def getConvResponse():
             convContext = "{}"
         jsonContext = json.loads(convContext)
     
+        print(convText)
+    
         response = assistant.message(workspace_id=workspace_id,
                                      input={'text': convText},
                                      context=jsonContext)
@@ -116,8 +118,6 @@ def getConvResponse():
    
     json_data = json.dumps(response,indent=2)
     
-    print(json_data)
-      
     r_type =  response["output"]["generic"][0]["response_type"]
     
     # set reponseContent by response_type
@@ -125,10 +125,9 @@ def getConvResponse():
         reponseContent = response["output"]["text"]
     else:
         reponseContent = response["output"]["generic"][0]
-    
-    # print reponseContent
+        
     print(reponseContent)
-            
+    
     responseDetails = {'responseType': r_type,
                        'reponseContent': reponseContent,
                        'context': response["context"]}
@@ -184,10 +183,13 @@ def getTextFromSpeech():
             timestamps=True,
             word_confidence=True).get_result()
 
-    text_output = response['results'][0]['alternatives'][0]['transcript']
+    if len(response['results']):
     
-    print(text_output)
-
+        text_output = response['results'][0]['alternatives'][0]['transcript']
+    
+    else:
+        text_output = '';
+        
     return Response(response=text_output, mimetype='plain/text')
 
 
