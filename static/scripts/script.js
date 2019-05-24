@@ -23,10 +23,14 @@ function displayMsgDiv(content, type, who) {
   }
   
   if(typeof content == 'string'){
-//	  msgHtml += "<div class='jss24'>";
+	  if (who == 'bot') {
+		  msgHtml += "<div class='jss24'>"; 
+	  }
 	  display_v = content.replace(/(\r\n)|(\n)/g,'<br>');
 	  msgHtml += display_v;
-//	  msgHtml += "</div>";
+	  if (who == 'bot') {
+		  msgHtml += "</div>";
+	  }
   }else if (typeof content == 'object') {
 	  if(type == 'text'){
 		  msgHtml += "<div class='jss24'>";
