@@ -32,6 +32,7 @@
         el: '#app'
       });
       var myChart = echarts.init(document.getElementById('main'));
+      var jsonObj = this.GetRequest();
       var option = {
           title: {
               text: ''
@@ -41,28 +42,46 @@
               data:['異常報告書']
           },
           xAxis: {
-              data: ["0618","0619","0620","0621","0622","0623"]
+              data: jsonObj.data
           },
           yAxis: {},
           series: [{
               name: '異常報告書',
               type: 'line',
-              data: [5, 20, 36, 10, 10, 20]
+              data: jsonObj.series
           }]
       };
 
       myChart.setOption(option);
       
       function getParams(key) {
-          var reg = new RegExp("(^|&)" + key + "=([^&]*)(&|$)");	
+          var reg = new RegExp("(^|&)" + key + "=([^&]*)(&|$)", "i");	
+          alert(window.location.search);
           var r = window.location.search.substr(1).match(reg);
           if (r != null) {
               return decodeURI(unescape(r[2]));
           }
           return null;
-      };
-      console.log("参数param1:"+getParams("param1"));//输出aa
-      console.log("参数param2:"+getParams("param2"));//输出bb
+     };
+     
+     function GetRequest() {
+    	    var url = location.search; //获取url中"?"符后的字串 
+    	    var theRequest = new Object();
+    	    if (url.indexOf("?") != -1) {
+    	        var str = url.substr(1);
+    	        strs = str.split("&");
+    	        for (var i = 0; i < strs.length; i++) {
+    	            theRequest[strs[i].split("=")[0]] = (strs[i].split("=")[1]);
+    	        }
+    	    }
+    	    var jsonObj = JSON.parse(decodeURIComponent(theRequest.param1));
+    	    // alert(jsonObj.data);
+    	    // return theRequest;
+    	    return jsonObj;
+    	}
+          
+      // console.log("参数param1:"+getParams("data"));//输出aa
+      // console.log("参数param2:"+getParams("series"));//输出bb
     </script>
   </body>
 </html>

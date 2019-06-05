@@ -55,7 +55,14 @@ function displayMsgDiv(content, type, who) {
 
 // msgHtml += "</div><div class='" + who + "-line'>" + strTime + '</div></div>';
   if (who == 'bot') {
-	  msgHtml += "</div></div><div class='jss33'><div class='jss32'><object id='contentarea' standby='loading data, please wait...' title='loading data, please wait...' width='100%' height='100%' type='text/html' data='./static/dashbord.html?param1="+ content +"&param2=bb'></object></div></div>";
+	  if (msgHtml.indexOf("ブロー機の保全はこちらです")!=-1) {
+		  var text = '{"data": ["0618","0619","0620","0621","0622","0623"],"series": [5,20,36,10,10,20]}';
+		  var obj = JSON.parse(text);
+		  var param = encodeURIComponent(JSON.stringify(obj));
+		  msgHtml += "</div></div><div class='jss33'><div class='jss32'><object id='contentarea' standby='loading data, please wait...' title='loading data, please wait...' width='100%' height='100%' type='text/html' data='./static/dashbord.html?param1="+ param +"&param2=bb'></object></div></div>";
+	  } else {
+		  msgHtml += "</div></div>";
+	  }
   }else{
 	  msgHtml += "</div></div>";
   }
