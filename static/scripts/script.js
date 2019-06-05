@@ -55,7 +55,7 @@ function displayMsgDiv(content, type, who) {
 
 // msgHtml += "</div><div class='" + who + "-line'>" + strTime + '</div></div>';
   if (who == 'bot') {
-	  msgHtml += "</div></div>";
+	  msgHtml += "</div></div><div class='jss33'><div class='jss32'><object id='contentarea' standby='loading data, please wait...' title='loading data, please wait...' width='100%' height='100%' type='text/html' data='./static/dashbord.html?param1="+ content +"&param2=bb'></object></div></div>";
   }else{
 	  msgHtml += "</div></div>";
   }
@@ -75,6 +75,7 @@ function displayMsgDiv(content, type, who) {
 
 $(document).ready(function() {
 // $('#q').attr('disabled', 'disabled');
+　　//  $("#includedContent").load("./dashbord.html");
   $('#p2').fadeTo(500, 1);
   $('#h').val('0');
 

@@ -580,6 +580,27 @@ opacity
 	border: none;
 	display: block;
 }
+
+.jss32 {
+	color: #333;
+	overflow: hidden;
+	background: #fff;
+	min-height: 40px;
+	box-shadow: 0px 1px 1px rgba(0, 0, 0, .2);
+	line-height: 24px;
+	/*white-space: pre-line;*/
+	border-radius: 20px;
+}
+
+.jss33 {
+	display: flex;
+	padding-left: 56px;
+	padding-right: 40px;
+	/*align-items: flex-start;*/
+	justify-content: flex-start;
+	height: 255px;
+}
+
 .jss1 {
 	top: 0;
 	left: 0;
