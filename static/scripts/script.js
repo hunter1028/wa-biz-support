@@ -95,7 +95,12 @@ $(document).ready(function() {
   })
     .done(function(res) {
       conversationContext = res.results.context;
-      displayMsgDiv(res.results.reponseContent,　res.results.responseType,  'bot');
+      if (res.results.responseType2){
+          displayMsgDiv(res.results.reponseContent,　res.results.responseType,  'bot');
+          displayMsgDiv(res.results.reponseContent2,　res.results.responseType2,  'bot');
+      }else{
+    	  displayMsgDiv(res.results.reponseContent,　res.results.responseType,  'bot'); 
+      }
 	// play(res.results.responseText);
     })
     .fail(function(jqXHR, e) {
@@ -130,7 +135,12 @@ function sendMessage(message){
     }).done(function(res) {
     	conversationContext = res.results.context;
     	// play(res.results.responseText);
-    	displayMsgDiv(res.results.reponseContent,res.results.responseType, 'bot');
+    	 if (res.results.responseType2){
+             displayMsgDiv(res.results.reponseContent,　res.results.responseType,  'bot');
+             displayMsgDiv(res.results.reponseContent2,　res.results.responseType2,  'bot');
+         }else{
+       	  displayMsgDiv(res.results.reponseContent,　res.results.responseType,  'bot'); 
+         }
     	if (res.results.sendToDiscovery === 'send') {
     		discoverySend = res.results.sendToDiscovery;
     		sendToDiscovery();

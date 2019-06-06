@@ -136,36 +136,67 @@ def getConvResponse():
    
     json_data = json.dumps(response,indent=2)
     
+    moreflg = false;
+    if (len(response["output"]["generic"])==1):
+        r_type =  response["output"]["generic"][0]["response_type"]
+        if r_type == 'text' :
+             reponseContent = response["output"]["text"]
+        else:
+            reponseContent = response["output"]["generic"][0]
+    else:
+        for item in response["output"]['generic']:
+            if item["response_type"] == 'text' :
+                reponseContent = item["text"]
+            if item["response_type"] == 'option' :
+                reponseContent2 = item   
+        moreflg =true
+    
     r_type =  response["output"]["generic"][0]["response_type"]
     intent = ''
     if len(response["intents"]):
         intent = response["intents"][0]["intent"]
     
     # set reponseContent by response_type
-    if r_type == 'text' :
-        reponseContent = response["output"]["text"]
-    else:
-        reponseContent = response["output"]["generic"][0]
+   
         
     print(reponseContent)
     global language_identify
     if r_type == 'text' and language_identify == 'en':
         translation =   getTranslatorToEnlish(reponseContent)
-         
+        if(moreflg):
+            translation2 =   getTranslatorToEnlish(reponseContent)
+            reponseContent2 = translation2['translations'][0]['translation']
         print(translation)
         reponseContent = translation['translations'][0]['translation']
     print(intent)
     
     if 'discovery' in intent.lower() :
-        responseDetails = {'responseType': r_type,
-                           'reponseContent': reponseContent,
-                           'sendToDiscovery': 'send',
-                           'context': response["context"]}
+        if(moreflg):
+            responseDetails = {'responseType': 'text',
+                       'responseType2': 'option',
+                       'reponseContent': reponseContent,
+                       'reponseContent2': reponseContent2,
+                       'sendToDiscovery': 'send',
+                       'context': response["context"]}
+        else:
+            responseDetails = {'responseType': r_type,
+                       'reponseContent': reponseContent,
+                       'sendToDiscovery': 'send',
+                       'context': response["context"]}       
     else :
-        responseDetails = {'responseType': r_type,
-                           'reponseContent': reponseContent,
-                           'sendToDiscovery': 'noSend',
-                           'context': response["context"]}
+
+        if(moreflg):
+            responseDetails = {'responseType': 'text',
+                       'responseType2': 'option',
+                       'reponseContent': reponseContent,
+                       'reponseContent2': reponseContent2,
+                       'sendToDiscovery': 'noSend',
+                       'context': response["context"]}
+        else:
+            responseDetails = {'responseType': r_type,
+                       'reponseContent': reponseContent,
+                       'sendToDiscovery': 'noSend',
+                       'context': response["context"]}    
     
     return jsonify(results=responseDetails)
 
@@ -275,7 +306,7 @@ def getDiscoveryChartOne():
     url = discovery_url
     )
 
-    discovery.set_detailed_response(True)
+#     discovery.set_detailed_response(True)
     response = discovery.query(collection_id=discovery_collection_id,environment_id=discovery_environment_id, filter=None, query="", natural_language_query=None, passages=None, aggregation="timeslice(発生日,1day)", count="2", return_fields=None, offset=None, sort=None, highlight=None, passages_fields=None, passages_count=None, passages_characters=None, deduplicate=None, deduplicate_field=None, similar=None, similar_document_ids=None, similar_fields=None, logging_opt_out=None, collection_ids=None, bias=None);
 
     json_data = json.dumps(response.get_result(), indent=2,ensure_ascii=False)
