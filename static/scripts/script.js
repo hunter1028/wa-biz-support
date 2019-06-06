@@ -1,8 +1,9 @@
 let conversationContext = '';
 let recorder;
 let context;
+let discoveryJson;
 
-function displayMsgDiv(content, type, who) {
+function displayMsgDiv(content, type, who, discoverySend="noSend") {
   const time = new Date();
   let hours = time.getHours();
   let minutes = time.getMinutes();
@@ -55,11 +56,12 @@ function displayMsgDiv(content, type, who) {
 
 // msgHtml += "</div><div class='" + who + "-line'>" + strTime + '</div></div>';
   if (who == 'bot') {
-	  if (msgHtml.indexOf("ブロー機の保全はこちらです")!=-1) {
-		  var text = '{"data": ["0618","0619","0620","0621","0622","0623"],"series": [5,20,36,10,10,20]}';
-		  var obj = JSON.parse(text);
-		  var param = encodeURIComponent(JSON.stringify(obj));
-		  msgHtml += "</div></div><div class='jss33'><div class='jss32'><object id='contentarea' standby='loading data, please wait...' title='loading data, please wait...' width='100%' height='100%' type='text/html' data='./static/dashbord.html?param1="+ param +"&param2=bb'></object></div></div>";
+	  if (discoverySend === 'send') {
+		  msgHtml = "";
+//		  var text = '{"data": ["0618","0619","0620","0621","0622","0623"],"series": [5,20,36,10,10,20]}';
+//		  var obj = JSON.parse(text);
+		  var discoveryJsonParam = encodeURIComponent(JSON.stringify(discoveryJson));
+		  msgHtml += "<div class='jss33'><div class='jss32'><object id='contentarea' standby='loading data, please wait...' title='loading data, please wait...' width='100%' height='100%' type='text/html' data='./static/dashbord.html?discoveryParam="+ discoveryJsonParam +"&param2=bb'></object></div></div>";
 	  } else {
 		  msgHtml += "</div></div>";
 	  }
@@ -94,7 +96,7 @@ $(document).ready(function() {
     .done(function(res) {
       conversationContext = res.results.context;
       displayMsgDiv(res.results.reponseContent,　res.results.responseType,  'bot');
-// play(res.results.responseText);
+	// play(res.results.responseText);
     })
     .fail(function(jqXHR, e) {
       console.log('Error: ' + jqXHR.responseText);
@@ -118,25 +120,38 @@ function sendMessage(message){
 		return;
 	}
 	displayMsgDiv(message, 'user');
-	
-     var form = new FormData();
-     form.append("convText","message");
-     var req = new XMLHttpRequest();
-     
-		    $.post('/api/conversation', {
-		    		convText: message,
-		    		context: JSON.stringify(conversationContext)
-		    	})
-		    .done(function(res) {
-		      conversationContext = res.results.context;
-//play(res.results.responseText);
-		      displayMsgDiv(res.results.reponseContent,res.results.responseType, 'bot');
-		    })
-		    .fail(function(jqXHR, e) {
-		      console.log('Error: ' + jqXHR.responseText);
-		    });
-}
+	var form = new FormData();
+	form.append("convText","message");
+	var req = new XMLHttpRequest();
 
+    $.post('/api/conversation', {
+    	convText: message,
+    	context: JSON.stringify(conversationContext)
+    }).done(function(res) {
+    	conversationContext = res.results.context;
+    	// play(res.results.responseText);
+    	displayMsgDiv(res.results.reponseContent,res.results.responseType, 'bot');
+    	if (res.results.sendToDiscovery === 'send') {
+    		discoverySend = res.results.sendToDiscovery;
+    		sendToDiscovery();
+    	}
+	}).fail(function(jqXHR, e) {
+		console.log('Error: ' + jqXHR.responseText);
+    });
+}
+function sendToDiscovery() {
+	 $.post('/api/discoveryChartOne', {
+	    	// convText: message,
+	    	// context: JSON.stringify(conversationContext)
+	    }).done(function(res) {
+	    	// conversationContext = res.results.context;
+	    	// play(res.results.responseText);
+	    	discoveryJson = res.results;
+	    	displayMsgDiv(res.results.reponseContent,res.results.responseType, 'bot', "send");
+		}).fail(function(jqXHR, e) {
+			console.log('Error: ' + jqXHR.responseText);
+	    });
+}
 function callConversation(res) {
   // $('#q').attr('disabled', 'disabled');
 
@@ -147,7 +162,7 @@ function callConversation(res) {
     .done(function(res, status) {
       conversationContext = res.results.context;
 //      play(res.results.responseText);
-      displayMsgDiv(res.results.reponseContent, res.results.responseType,'bot');
+      displayMsgDiv(res.results.reponseContent, res.results.responseType,'bot', null, null);
     })
     .fail(function(jqXHR, e) {
       console.log('Error: ' + jqXHR.responseText);
@@ -238,7 +253,7 @@ function stopRecording(button) {
       // Decode asynchronously
       request.onload = function() {
     	  if(request.response.trim() != ''){
-    		  displayMsgDiv(request.response, 'user');
+    		  displayMsgDiv(request.response, 'user', null, null);
     		  callConversation(request.response);
     	  }else{
     		  displayMsgDiv('聞き取れませんでした。もう一度お試しください。', 'text', 'bot');

@@ -24,6 +24,7 @@ from flask_cors import CORS
 from ibm_watson import AssistantV1
 from ibm_watson import SpeechToTextV1
 from ibm_watson import TextToSpeechV1
+from ibm_watson import DiscoveryV1
 from telnetlib import theNULL
 from ibm_watson import LanguageTranslatorV3
 from _ast import If
@@ -86,8 +87,12 @@ else:
     tranlatorPassword = os.environ.get('TRANSLATOR_PASSWORD')
     tranlatorUrl = os.environ.get('TRANSLATOR_URL')
     tranlatorIAMKey = os.environ.get('TRANSLATOR_IAM_APIKEY')
-
-
+    
+    discovery_version = os.environ.get('DISCOVERY_VERSION')
+    discovery_iam_apikey = os.environ.get('DISCOVERY_IAM_APIKEY')
+    discovery_url = os.environ.get('DISCOVERY_URL')
+    discovery_collection_id = os.environ.get('DISCOVERY_COLLECTION_ID')
+    discovery_environment_id = os.environ.get('DISCOVERY_ENVIRONMENT_ID')
 
 @app.route('/')
 def Welcome():
@@ -132,6 +137,9 @@ def getConvResponse():
     json_data = json.dumps(response,indent=2)
     
     r_type =  response["output"]["generic"][0]["response_type"]
+    intent = ''
+    if len(response["intents"]):
+        intent = response["intents"][0]["intent"]
     
     # set reponseContent by response_type
     if r_type == 'text' :
@@ -146,11 +154,18 @@ def getConvResponse():
          
         print(translation)
         reponseContent = translation['translations'][0]['translation']
+    print(intent)
     
-    responseDetails = {'responseType': r_type,
-                       'reponseContent': reponseContent,
-                       'context': response["context"]}
-    
+    if 'discovery' in intent.lower() :
+        responseDetails = {'responseType': r_type,
+                           'reponseContent': reponseContent,
+                           'sendToDiscovery': 'send',
+                           'context': response["context"]}
+    else :
+        responseDetails = {'responseType': r_type,
+                           'reponseContent': reponseContent,
+                           'sendToDiscovery': 'noSend',
+                           'context': response["context"]}
     
     return jsonify(results=responseDetails)
 
@@ -252,7 +267,33 @@ def getTranslatorToEnlish(text):
     return translation
 
 
+@app.route('/api/discoveryChartOne', methods=['POST', 'GET'])
+def getDiscoveryChartOne():
+    discovery = DiscoveryV1(
+    version = discovery_version,
+    iam_apikey = discovery_iam_apikey,
+    url = discovery_url
+    )
 
+    discovery.set_detailed_response(True)
+    response = discovery.query(collection_id=discovery_collection_id,environment_id=discovery_environment_id, filter=None, query="", natural_language_query=None, passages=None, aggregation="timeslice(発生日,1day)", count="2", return_fields=None, offset=None, sort=None, highlight=None, passages_fields=None, passages_count=None, passages_characters=None, deduplicate=None, deduplicate_field=None, similar=None, similar_document_ids=None, similar_fields=None, logging_opt_out=None, collection_ids=None, bias=None);
+
+    json_data = json.dumps(response.get_result(), indent=2,ensure_ascii=False)
+    p_obj = json.loads(json_data)
+    
+    responseDemo = {}
+    for resultD in p_obj['aggregations'][0]['results']:
+        if resultD['matching_results'] > 0:
+            responseDemo[resultD['key_as_string'][5:10].replace('-', ' ')] = resultD['matching_results']
+
+    
+    # response = Response(json.dumps(responseDemo))
+#     response['Access-Control-Allow-Origin'] = '*'
+#     response['Access-Control-Allow-Methods'] = 'POST, GET, OPTIONS' 
+#     response['Access-Control-Max-Age'] = '1000' 
+#     response['Access-Control-Allow-Headers'] = '*'
+    return jsonify(results=responseDemo)
+    
 port = os.getenv('PORT', '5000')
 if __name__ == "__main__":
     socketio.run(app, host='0.0.0.0', port=int(port))

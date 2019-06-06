@@ -34,7 +34,7 @@
       var myChart = echarts.init(document.getElementById('main'));
       var jsonObj = this.GetRequest();
       var option = {
-          title: {
+          title: { 
               text: ''
           },
           tooltip: {},
@@ -42,13 +42,13 @@
               data:['異常報告書']
           },
           xAxis: {
-              data: jsonObj.data
+              data: Object.keys(jsonObj)
           },
           yAxis: {},
           series: [{
               name: '異常報告書',
               type: 'line',
-              data: jsonObj.series
+              data: Object.keys(jsonObj).map(function(_) { return jsonObj[_]; })
           }]
       };
 
@@ -65,7 +65,7 @@
      };
      
      function GetRequest() {
-    	    var url = location.search; //获取url中"?"符后的字串 
+    	    var url = location.search;
     	    var theRequest = new Object();
     	    if (url.indexOf("?") != -1) {
     	        var str = url.substr(1);
@@ -74,7 +74,7 @@
     	            theRequest[strs[i].split("=")[0]] = (strs[i].split("=")[1]);
     	        }
     	    }
-    	    var jsonObj = JSON.parse(decodeURIComponent(theRequest.param1));
+    	    var jsonObj = JSON.parse(decodeURIComponent(theRequest.discoveryParam));
     	    // alert(jsonObj.data);
     	    // return theRequest;
     	    return jsonObj;
