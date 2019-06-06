@@ -32,6 +32,8 @@ app = Flask(__name__)
 socketio = SocketIO(app)
 CORS(app)
 
+language_identify = 'ja'
+  
 if 'VCAP_SERVICES' in os.environ:
     vcap = json.loads(os.getenv('VCAP_SERVICES'))
     print('Found VCAP_SERVICES')
@@ -96,6 +98,7 @@ def Welcome():
 def getConvResponse():
     # Instantiate Watson Assistant client.
     # only give a url if we have one (don't override the default)
+    
     try:
         assistant_kwargs = {
             'version': '2018-09-20',
@@ -105,18 +108,7 @@ def getConvResponse():
             'url': assistantUrl
         }
         
-        laguage_kwargs = {
-            'version': '2018-05-01',
-            'username': tranlatorUser,
-            'password': tranlatorPassword,
-            'iam_apikey': tranlatorIAMKey,
-            'url': tranlatorUrl
-        }
-    
         assistant = AssistantV1(**assistant_kwargs)
-        
-        language_translator = LanguageTranslatorV3(**laguage_kwargs)
-    
         convText = request.form.get('convText')
         convContext = request.form.get('context')
     
@@ -124,21 +116,11 @@ def getConvResponse():
             convContext = "{}"
         jsonContext = json.loads(convContext)
     
-        print(convText)
+        if convText != None :
+            print('翻訳前：　'+convText)
         
-        if convText!=None and convText != '' :
-            language = language_translator.identify(convText).get_result()
+        convText = getTranslatorText(convText)
         
-            identify_language = language['languages'][0]['language']
-        
-            print(language['languages'][0]['language'])
-
-            if identify_language != 'ja' :
-                translation = language_translator.translate(text=convText,model_id=identify_language+'-ja').get_result()
-                convText = translation['translations'][0]['translation']
-                print(convText)
-                
-    
         response = assistant.message(workspace_id=workspace_id,
                                      input={'text': convText},
                                      context=jsonContext)
@@ -158,10 +140,12 @@ def getConvResponse():
         reponseContent = response["output"]["generic"][0]
         
     print(reponseContent)
-    if r_type == 'text' :
+    global language_identify
+    if r_type == 'text' and language_identify == 'en':
+        translation =   getTranslatorToEnlish(reponseContent)
          
-         translation = language_translator.translate(text=reponseContent,model_id='ja-en').get_result()
-         reponseContent = translation['translations'][0]['translation']
+        print(translation)
+        reponseContent = translation['translations'][0]['translation']
     
     responseDetails = {'responseType': r_type,
                        'reponseContent': reponseContent,
@@ -226,6 +210,47 @@ def getTextFromSpeech():
         text_output = '';
         
     return Response(response=text_output, mimetype='plain/text')
+
+def getTranslatorText(convText):
+    global language_identify
+    laguage_kwargs = {
+        'version': '2018-05-01',
+        'username': tranlatorUser,
+        'password': tranlatorPassword,
+        'iam_apikey': tranlatorIAMKey,
+        'url': tranlatorUrl
+    }
+  
+    language_translator = LanguageTranslatorV3(**laguage_kwargs)
+    if convText!=None and convText != '' :
+        language = language_translator.identify(convText).get_result()
+        language_identify = language['languages'][0]['language']
+        print(language['languages'][0]['language'])
+
+        if language_identify != 'ja' :
+            
+            language_identify = 'en'
+            translation = language_translator.translate(text=convText,model_id='en'+'-ja').get_result()
+#           translation = language_translator.translate(text=convText,model_id=language_identify+'-ja').get_result()  
+            convText = translation['translations'][0]['translation']
+            print('翻訳後：　　'+convText)
+            
+    return convText
+
+def getTranslatorToEnlish(text):
+    
+    laguage_kwargs = {
+        'version': '2018-05-01',
+        'username': tranlatorUser,
+        'password': tranlatorPassword,
+        'iam_apikey': tranlatorIAMKey,
+        'url': tranlatorUrl
+    }
+  
+    language_translator = LanguageTranslatorV3(**laguage_kwargs)
+    translation = language_translator.translate(text=text,model_id='ja-en').get_result()
+    return translation
+
 
 
 port = os.getenv('PORT', '5000')
