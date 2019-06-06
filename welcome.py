@@ -21,10 +21,12 @@ from flask import jsonify
 from flask import request
 from flask_socketio import SocketIO
 from flask_cors import CORS
-from watson_developer_cloud import AssistantV1
-from watson_developer_cloud import SpeechToTextV1
-from watson_developer_cloud import TextToSpeechV1
+from ibm_watson import AssistantV1
+from ibm_watson import SpeechToTextV1
+from ibm_watson import TextToSpeechV1
 from telnetlib import theNULL
+from ibm_watson import LanguageTranslatorV3
+from _ast import If
 
 app = Flask(__name__)
 socketio = SocketIO(app)
@@ -77,6 +79,12 @@ else:
     workspace_id = os.environ.get('WORKSPACE_ID')
     speechToTextUrl = os.environ.get('SPEECHTOTEXT_URL')
     speechToTextIAMKey = os.environ.get('SPEECHTOTEXT_IAM_APIKEY')
+    
+    tranlatorUser = os.environ.get('TRANSLATOR_USER')
+    tranlatorPassword = os.environ.get('TRANSLATOR_PASSWORD')
+    tranlatorUrl = os.environ.get('TRANSLATOR_URL')
+    tranlatorIAMKey = os.environ.get('TRANSLATOR_IAM_APIKEY')
+
 
 
 @app.route('/')
@@ -96,8 +104,18 @@ def getConvResponse():
             'iam_apikey': assistantIAMKey,
             'url': assistantUrl
         }
+        
+        laguage_kwargs = {
+            'version': '2018-05-01',
+            'username': tranlatorUser,
+            'password': tranlatorPassword,
+            'iam_apikey': tranlatorIAMKey,
+            'url': tranlatorUrl
+        }
     
         assistant = AssistantV1(**assistant_kwargs)
+        
+        language_translator = LanguageTranslatorV3(**laguage_kwargs)
     
         convText = request.form.get('convText')
         convContext = request.form.get('context')
@@ -107,6 +125,19 @@ def getConvResponse():
         jsonContext = json.loads(convContext)
     
         print(convText)
+        
+        if convText!=None and convText != '' :
+            language = language_translator.identify(convText).get_result()
+        
+            identify_language = language['languages'][0]['language']
+        
+            print(language['languages'][0]['language'])
+
+            if identify_language != 'ja' :
+                translation = language_translator.translate(text=convText,model_id=identify_language+'-ja').get_result()
+                convText = translation['translations'][0]['translation']
+                print(convText)
+                
     
         response = assistant.message(workspace_id=workspace_id,
                                      input={'text': convText},
@@ -127,6 +158,10 @@ def getConvResponse():
         reponseContent = response["output"]["generic"][0]
         
     print(reponseContent)
+    if r_type == 'text' :
+         
+         translation = language_translator.translate(text=reponseContent,model_id='ja-en').get_result()
+         reponseContent = translation['translations'][0]['translation']
     
     responseDetails = {'responseType': r_type,
                        'reponseContent': reponseContent,
