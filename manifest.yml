@@ -10,9 +10,8 @@ declared-services:
     label: speech_to_text
     plan: lite
   language-translator-ld:
-    label: language-translator
+    label: language_translator
     plan: lite
-    
 
 applications:
 - path: .
