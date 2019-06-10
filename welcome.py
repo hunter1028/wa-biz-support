@@ -273,7 +273,7 @@ def getTranslatorText(convText):
         language_identify = language['languages'][0]['language']
         print(language['languages'][0]['language'])
 
-        if language_identify != 'ja' and language_identify !='zh':
+        if language_identify != 'ja' and language_identify !='zh' and language_identify !='zh-TW':
             
             language_identify = 'en'
             translation = language_translator.translate(text=convText,model_id='en'+'-ja').get_result()
