@@ -3,4 +3,4 @@ watson_developer_cloud==2.5.0
 python-dotenv==0.9.1
 flask-cors==3.0.2
 flask-socketio==3.0.2
-pip==19.0.3
+pip==19.1.1

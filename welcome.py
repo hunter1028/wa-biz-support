@@ -136,7 +136,7 @@ def getConvResponse():
    
     json_data = json.dumps(response,indent=2)
     
-    moreflg = false;
+    moreflg = False;
     if (len(response["output"]["generic"])==1):
         r_type =  response["output"]["generic"][0]["response_type"]
         if r_type == 'text' :
@@ -149,7 +149,7 @@ def getConvResponse():
                 reponseContent = item["text"]
             if item["response_type"] == 'option' :
                 reponseContent2 = item   
-        moreflg =true
+        moreflg =True
     
     r_type =  response["output"]["generic"][0]["response_type"]
     intent = ''
