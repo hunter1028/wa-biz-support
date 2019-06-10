@@ -1,7 +1,7 @@
 {
-  "name": "watson-voice-bot",
+  "name": "wa-biz-support",
   "version": "1.0.0",
-  "description": "Watson Voice Bot",
+  "description": "wa-biz-support",
   "main": "index.js",
   "directories": {
     "doc": "doc"
@@ -11,14 +11,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/IBM/watson-voice-bot.git"
+    "url": "git+https://github.com/hunter1028/wa-biz-support.git"
   },
   "author": "",
   "license": "Apache-2.0",
   "bugs": {
-    "url": "https://github.com/IBM/watson-voice-bot/issues"
+    "url": "https://github.com/hunter1028/wa-biz-support/issues"
   },
-  "homepage": "https://github.com/IBM/watson-voice-bot#readme",
+  "homepage": "https://github.com/hunter1028/wa-biz-support#readme",
   "devDependencies": {
     "eslint": "^5.2.0",
     "eslint-config-google": "^0.9.1",
