@@ -9,6 +9,10 @@ declared-services:
   Speech to Text-to:
     label: speech_to_text
     plan: lite
+  language-translator-ld:
+    label: language-translator
+    plan: lite
+    
 
 applications:
 - path: .
@@ -21,9 +25,11 @@ applications:
   buildpack: https://github.com/cloudfoundry/python-buildpack.git
   random-route: true
   services:
+  - language-translator-ld
   - Speech to Text-to
   - TTS-17751646
   - Watson Assistant-ql
+  
 env:
   WORKSPACE_ID: bc201211-ffd4-4a35-95b2-e0e4408a7729
   ASSISTANT_IAM_APIKEY: cO4XTEJifNmWlKOFAkNa0k3mSPFPX6Jlr6vdriG96nkM
