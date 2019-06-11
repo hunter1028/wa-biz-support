@@ -70,6 +70,12 @@ if 'VCAP_SERVICES' in os.environ:
 
     if "ASSISTANT_IAM_APIKEY" in os.environ:
         assistantIAMKey = os.getenv('ASSISTANT_IAM_APIKEY')
+        
+    discovery_version='2019-02-10'
+    discovery_iam_apikey='3UYwda1sKeY8067bhn1QMLqv8ZXhXUMci5GQGwqTwY_f'
+    discovery_url='https://gateway-tok.watsonplatform.net/discovery/api'
+    discovery_collection_id='5e7a4dba-7dd5-43bf-aae2-6ad71c53f211'
+    discovery_environment_id='b38640cb-c019-4e68-9e27-16841796ae92'
 
 else:
     print('Found local VCAP_SERVICES')
