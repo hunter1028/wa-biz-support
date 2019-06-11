@@ -131,7 +131,7 @@ def getConvResponse():
         if convText != None :
             print('翻訳前：　'+convText)
         
-        convText = getTranslatorText(convText)
+#         convText = getTranslatorText(convText)
         
         response = assistant.message(workspace_id=workspace_id,
                                      input={'text': convText},
