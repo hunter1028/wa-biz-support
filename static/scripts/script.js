@@ -27,6 +27,7 @@ function displayMsgDiv(content, type, who, discoverySend="noSend") {
 	  if (who == 'bot') {
 		  msgHtml += "<div class='jss24'>"; 
 	  }
+	  content=content.replace(/^[/*・]/,"");
 	  display_v = content.replace(/(\r\n)|(\n)/g,'<br>');
 	  msgHtml += display_v;
 	  if (who == 'bot') {
