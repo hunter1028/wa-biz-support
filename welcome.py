@@ -57,7 +57,14 @@ if 'VCAP_SERVICES' in os.environ:
         speechToTextPassword = speechToTextCreds.get('password')
         speechToTextUrl = speechToTextCreds.get('url')
         speechToTextIAMKey = speechToTextCreds.get('apikey')
-
+        
+    if 'language-translator-ld' in vcap:
+        tranlatorCreds = vcap['language-translator-ld'][0]['credentials']
+        tranlatorUser = tranlatorCreds.get('username')
+        tranlatorPassword = tranlatorCreds.get('password')
+        tranlatorUrl = tranlatorCreds.get('url')
+        tranlatorIAMKey = tranlatorCreds.get('apikey')
+        
     if "WORKSPACE_ID" in os.environ:
         workspace_id = os.getenv('WORKSPACE_ID')
 
