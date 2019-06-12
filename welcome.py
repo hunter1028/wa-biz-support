@@ -161,7 +161,7 @@ def getConvResponse():
     if (len(response["output"]["generic"])==1):
         r_type =  response["output"]["generic"][0]["response_type"]
         if r_type == 'text' :
-             reponseContent = response["output"]["text"]
+            reponseContent = response["output"]["text"]
         else:
             reponseContent = response["output"]["generic"][0]
     else:
@@ -182,13 +182,29 @@ def getConvResponse():
         
     print(reponseContent)
     global language_identify
-    if r_type == 'text' and language_identify == 'en':
-        translation =   getTranslatorToEnlish(reponseContent)
-        if(moreflg):
-            translation2 =   getTranslatorToEnlish(reponseContent)
-            reponseContent2 = translation2['translations'][0]['translation']
-        print(translation)
-        reponseContent = translation['translations'][0]['translation']
+    if language_identify == 'en':
+        if r_type == 'text' :
+            translation =   getTranslatorToEnlish(reponseContent)
+            if(moreflg):
+                translation2 =   getTranslatorToEnlish(reponseContent2["title"])
+                reponseContent2["title"] = translation2['translations'][0]['translation']
+#                 for item in reponseContent2["options"]:
+#                     trans_val = getTranslatorToEnlish(item['value']['input']['text'])
+#                     print(trans_val['translations'][0]['translation'])
+#                     item['value']['input']['text'] = trans_val['translations'][0]['translation']
+            print(translation)
+            reponseContent = translation['translations'][0]['translation']
+        else:
+            translation2 =   getTranslatorToEnlish(reponseContent["title"])
+            reponseContent["title"] = translation2['translations'][0]['translation']
+#             for item in reponseContent["options"]:
+#                 
+#                 print(item['value']['input']['text'])
+#                 item_value = item['value']['input']['text']
+#                 item['value']['input']['text'] = getTranslatorToEnlish(item['value']['input']['text'])
+           
+            
+        
     print(intent)
     
     if 'discovery' in intent.lower() :
@@ -235,13 +251,20 @@ def getSpeechFromText():
     ttsService = TextToSpeechV1(**tts_kwargs)
     
     print(inputText)
+    
+    global language_identify
+    if language_identify == 'en':
+        voice_ = 'en-US_AllisonVoice'
+    else:
+        voice_ = 'ja-JP_EmiVoice'
 
     def generate():
         audioOut = ttsService.synthesize(
             inputText,
-            'audio/wav',
+            voice=voice_,
+            accept='audio/wav'
 #             'en-US_AllisonVoice').get_result()
-            'ja-JP_EmiVoice').get_result()
+            ).get_result()
             
 
         data = audioOut.content
