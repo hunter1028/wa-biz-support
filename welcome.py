@@ -37,13 +37,15 @@ language_identify = 'ja'
   
 if 'VCAP_SERVICES' in os.environ:
     vcap = json.loads(os.getenv('VCAP_SERVICES'))
-    print('Found VCAP_SERVICES')
+    print('Found VCAP_SERVICES' + vcap)
     if 'conversation' in vcap:
         conversationCreds = vcap['conversation'][0]['credentials']
         assistantUsername = conversationCreds.get('username')
         assistantPassword = conversationCreds.get('password')
         assistantIAMKey = conversationCreds.get('apikey')
         assistantUrl = conversationCreds.get('url')
+        
+    print('conversationCreds : '+conversationCreds)   
 
     if 'text_to_speech' in vcap:
         textToSpeechCreds = vcap['text_to_speech'][0]['credentials']
@@ -51,6 +53,9 @@ if 'VCAP_SERVICES' in os.environ:
         textToSpeechPassword = textToSpeechCreds.get('password')
         textToSpeechUrl = textToSpeechCreds.get('url')
         textToSpeechIAMKey = textToSpeechCreds.get('apikey')
+        
+    print('textToSpeechCreds : '+textToSpeechCreds)
+        
     if 'speech_to_text' in vcap:
         speechToTextCreds = vcap['speech_to_text'][0]['credentials']
         speechToTextUser = speechToTextCreds.get('username')
@@ -58,12 +63,16 @@ if 'VCAP_SERVICES' in os.environ:
         speechToTextUrl = speechToTextCreds.get('url')
         speechToTextIAMKey = speechToTextCreds.get('apikey')
         
-    if 'language-translator-ld' in vcap:
+    print('speechToTextCreds : '+speechToTextCreds)
+      
+    if 'language_translator' in vcap:
         tranlatorCreds = vcap['language-translator-ld'][0]['credentials']
         tranlatorUser = tranlatorCreds.get('username')
         tranlatorPassword = tranlatorCreds.get('password')
         tranlatorUrl = tranlatorCreds.get('url')
         tranlatorIAMKey = tranlatorCreds.get('apikey')
+        
+    print('tranlatorCreds : '+tranlatorCreds)
         
     if "WORKSPACE_ID" in os.environ:
         workspace_id = os.getenv('WORKSPACE_ID')
@@ -137,7 +146,7 @@ def getConvResponse():
         if convText != None :
             print('翻訳前：　'+convText)
         
-#         convText = getTranslatorText(convText)
+        convText = getTranslatorText(convText)
         
         response = assistant.message(workspace_id=workspace_id,
                                      input={'text': convText},
