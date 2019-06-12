@@ -44,7 +44,7 @@ if 'VCAP_SERVICES' in os.environ:
         assistantIAMKey = conversationCreds.get('apikey')
         assistantUrl = conversationCreds.get('url')
         
-    print('conversationCreds : '+conversationCreds)   
+    print('assistantIAMKey : '+assistantIAMKey)   
 
     if 'text_to_speech' in vcap:
         textToSpeechCreds = vcap['text_to_speech'][0]['credentials']
@@ -53,7 +53,7 @@ if 'VCAP_SERVICES' in os.environ:
         textToSpeechUrl = textToSpeechCreds.get('url')
         textToSpeechIAMKey = textToSpeechCreds.get('apikey')
         
-    print('textToSpeechCreds : '+textToSpeechCreds)
+    print('textToSpeechIAMKey : '+textToSpeechIAMKey)
         
     if 'speech_to_text' in vcap:
         speechToTextCreds = vcap['speech_to_text'][0]['credentials']
@@ -62,7 +62,7 @@ if 'VCAP_SERVICES' in os.environ:
         speechToTextUrl = speechToTextCreds.get('url')
         speechToTextIAMKey = speechToTextCreds.get('apikey')
         
-    print('speechToTextCreds : '+speechToTextCreds)
+    print('speechToTextIAMKey : '+speechToTextIAMKey)
       
     if 'language_translator' in vcap:
         tranlatorCreds = vcap['language-translator-ld'][0]['credentials']
@@ -71,7 +71,7 @@ if 'VCAP_SERVICES' in os.environ:
         tranlatorUrl = tranlatorCreds.get('url')
         tranlatorIAMKey = tranlatorCreds.get('apikey')
         
-    print('tranlatorCreds : '+tranlatorCreds)
+    print('tranlatorIAMKey : '+tranlatorIAMKey)
         
     if "WORKSPACE_ID" in os.environ:
         workspace_id = os.getenv('WORKSPACE_ID')
