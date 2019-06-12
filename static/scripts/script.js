@@ -2,6 +2,8 @@ let conversationContext = '';
 let recorder;
 let context;
 let discoveryJson;
+let audioText = '';
+
 
 function displayMsgDiv(content, type, who, discoverySend="noSend") {
   const time = new Date();
@@ -26,6 +28,7 @@ function displayMsgDiv(content, type, who, discoverySend="noSend") {
   if(typeof content == 'string'){
 	  if (who == 'bot') {
 		  msgHtml += "<div class='jss24'>"; 
+		  audioText +=content;
 	  }
 	  content=content.replace(/^[/*・]/,"");
 	  display_v = content.replace(/(\r\n)|(\n)/g,'<br>');
@@ -36,12 +39,16 @@ function displayMsgDiv(content, type, who, discoverySend="noSend") {
   }else if (typeof content == 'object') {
 	  if(type == 'text'){
 		  msgHtml += "<div class='jss24'>";
+		  audioText+=content[0]
+		
 		  display_v =content[0].replace(/(\r\n)|(\n)/g,'<br>');
 		  msgHtml += display_v;
 		  msgHtml += "</div>";
 	  }else{
 		  msgHtml += "<div class='jss25'>";
 		  msgHtml += content.title;
+		
+		  audioText+=content.title
 		  msgHtml += "</div>";
 		  
 		 
@@ -54,7 +61,7 @@ function displayMsgDiv(content, type, who, discoverySend="noSend") {
 		  } 
 	  }
   }
-
+  
 // msgHtml += "</div><div class='" + who + "-line'>" + strTime + '</div></div>';
   if (who == 'bot') {
 	  if (discoverySend === 'send') {
@@ -104,8 +111,9 @@ $(document).ready(function() {
     	  displayMsgDiv(res.results.reponseContent,　res.results.responseType,  'bot'); 
     	 
       }
+      play(audioText);
+      audioText='';
 //      play(res.results.reponseContent);
-	// play(res.results.responseText);
     })
     .fail(function(jqXHR, e) {
       console.log('Error: ' + jqXHR.responseText);
@@ -147,6 +155,8 @@ function sendMessage(message){
        
          }
 //   	  	play(res.results.reponseContent);
+    	  play(audioText);
+    	  audioText='';
     	if (res.results.sendToDiscovery === 'send') {
     		discoverySend = res.results.sendToDiscovery;
     		sendToDiscovery();
@@ -161,7 +171,6 @@ function sendToDiscovery() {
 	    	// context: JSON.stringify(conversationContext)
 	    }).done(function(res) {
 	    	// conversationContext = res.results.context;
-	    	// play(res.results.responseText);
 	    	discoveryJson = res.results;
 	    	displayMsgDiv(res.results.reponseContent,res.results.responseType, 'bot', "send");
 		}).fail(function(jqXHR, e) {
@@ -179,6 +188,8 @@ function callConversation(res) {
       conversationContext = res.results.context;
 //      play(res.results.responseText);
       displayMsgDiv(res.results.reponseContent, res.results.responseType,'bot', null, null);
+      play(audioText);
+      audioText='';
     })
     .fail(function(jqXHR, e) {
       console.log('Error: ' + jqXHR.responseText);
@@ -212,6 +223,7 @@ function play(inputText) {
 
   // Play the loaded file
   function play() {
+		 
     // Create a source node from the buffer
     const source = context.createBufferSource();
     source.buffer = buf;
@@ -219,6 +231,7 @@ function play(inputText) {
     source.connect(context.destination);
     // Play immediately
     source.start(0);
+    
   }
 }
 
