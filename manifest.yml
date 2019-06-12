@@ -1,12 +1,12 @@
 ---
 declared-services:
-  Watson Assistant-ql:
+  Watson Assistant-c2:
     label: assistant
     plan: free
-  TTS-17751646:
+  Text to Speech-z1:
     label: text_to_speech
     plan: lite
-  Speech to Text-to:
+  Speech to Text-9b:
     label: speech_to_text
     plan: lite
   Language Translator-cm:
@@ -25,10 +25,10 @@ applications:
   random-route: true
   services:
   - Language Translator-cm
-  - Speech to Text-to
-  - TTS-17751646
-  - Watson Assistant-ql
+  - Speech to Text-9b
+  - Text to Speech-z1
+  - Watson Assistant-c2
   
 env:
-  WORKSPACE_ID: bc201211-ffd4-4a35-95b2-e0e4408a7729
-  ASSISTANT_IAM_APIKEY: cO4XTEJifNmWlKOFAkNa0k3mSPFPX6Jlr6vdriG96nkM
+  WORKSPACE_ID: 67cf2833-f5bc-4db0-946a-85e36f6592c8
+  ASSISTANT_IAM_APIKEY: hOqxSzK4JoUQT2B4UP7JEHfbWAzmFgqQsGM1Y3mT8PuB
