@@ -65,7 +65,7 @@ if 'VCAP_SERVICES' in os.environ:
     print('speechToTextIAMKey : '+speechToTextIAMKey)
       
     if 'language_translator' in vcap:
-        tranlatorCreds = vcap['language-translator-ld'][0]['credentials']
+        tranlatorCreds = vcap['language_translator'][0]['credentials']
         tranlatorUser = tranlatorCreds.get('username')
         tranlatorPassword = tranlatorCreds.get('password')
         tranlatorUrl = tranlatorCreds.get('url')
