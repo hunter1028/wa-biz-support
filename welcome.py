@@ -37,7 +37,6 @@ language_identify = 'ja'
   
 if 'VCAP_SERVICES' in os.environ:
     vcap = json.loads(os.getenv('VCAP_SERVICES'))
-    print('Found VCAP_SERVICES' + vcap)
     if 'conversation' in vcap:
         conversationCreds = vcap['conversation'][0]['credentials']
         assistantUsername = conversationCreds.get('username')
