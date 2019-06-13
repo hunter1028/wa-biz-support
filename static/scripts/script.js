@@ -208,16 +208,29 @@ function play(inputText) {
 
   // Decode asynchronously
   request.onload = function() {
-    context.decodeAudioData(
-      request.response,
-      function(buffer) {
-        buf = buffer;
-        play();
-      },
-      function(error) {
-        console.error('decodeAudioData error', error);
-      }
-    );
+	  
+	  context.decodeAudioData(
+			  request.response,
+              audioBuffer => {
+                  buf = audioBuffer;
+                  play();
+               }, 
+              error => 
+               console.error('decodeAudioData error')
+             );
+             
+             
+             
+//    context.decodeAudioData(
+//      request.response,
+//      function(buffer) {
+//        buf = buffer;
+//        play();
+//      },
+//      function(error) {
+//        console.error('decodeAudioData error', error);
+//      }
+//    );
   };
   request.send(params);
 
