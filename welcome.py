@@ -117,7 +117,8 @@ else:
 
 @app.route('/')
 def Welcome():
-    return app.send_static_file('index.html')
+    return app.send_static_file('login.html')
+#     return app.send_static_file('index.html')
 
 
 @app.route('/api/conversation', methods=['POST', 'GET'])
