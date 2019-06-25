@@ -28,6 +28,12 @@ from ibm_watson import DiscoveryV1
 from telnetlib import theNULL
 from ibm_watson import LanguageTranslatorV3
 from _ast import If
+# ======= add login ======= 
+from flask_login import login_user, login_required
+from flask_login import LoginManager, current_user
+from flask_login import logout_user
+from user_authorization import User, do_auth
+#from flask_wtf.csrf import CsrfProtect
 
 from flask import make_response
 import ibm_boto3
@@ -42,7 +48,13 @@ CORS(app)
 
 language_identify = 'ja'
 
-
+# ======= add login ======= 
+app.secret_key = os.urandom(24)
+# use login manager to manage session
+login_manager = LoginManager()
+login_manager.session_protection = 'strong'
+login_manager.login_view = 'login'
+login_manager.init_app(app=app)
 
 if 'VCAP_SERVICES' in os.environ:
     vcap = json.loads(os.getenv('VCAP_SERVICES'))
@@ -142,9 +154,9 @@ cos = ibm_boto3.resource("s3",
 
 @app.route('/')
 def Welcome():
-#     return app.send_static_file('login.html')
-    return app.send_static_file('login2.html')
-#     return app.send_static_file('index.html')
+#    return app.send_static_file('login.html')
+#    return app.send_static_file('login2.html')
+    return app.send_static_file('login.html')
 
 @app.route('/api/conversation', methods=['POST', 'GET'])
 def getConvResponse():
@@ -367,20 +379,42 @@ def getTranslatorToEnlish(text):
     translation = language_translator.translate(text=text,model_id='ja-en').get_result()
     return translation
 
+@login_manager.user_loader
+def load_user(user_id):
+    return User.get(user_id)
+
+# csrf protection
+#csrf = CSRFProtect()
+#csrf.init_app(app)
+
 @app.route('/login', methods=['POST', 'GET'])
 def login():
+    logout_user()
     user_name = request.args.get('username', None)
     password =  request.args.get('password', None)
+    remember_me = request.args.get('rememberme', False)
+    if user_name == '' or  password == '':
+        return redirect('/')
+        
+    user = User(user_name)
+    
     if do_auth(user_name, password):
-        # 検証成功
+        login_user(user, remember=remember_me)
         return app.send_static_file('index.html')
+        # return redirect(url_for('/chatbot'))
     else:
         return redirect('/')
     # return app.send_static_file('index.html')
     # return redirect('/index')
 
+@app.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    return redirect(url_for('login'))
 
 @app.route('/chatbot', methods=['POST', 'GET'])
+@login_required
 def index():
     return app.send_static_file('index.html')
 #     return app.send_static_file('index.html')
