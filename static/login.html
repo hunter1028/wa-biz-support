@@ -1,65 +1,156 @@
-<!doctype html>
-<html lang="en">
-
+<html>
 <head>
 <meta charset="utf-8">
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="description" content="Airtel WVA POC Bot">
-<meta name="viewport"
-	content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
-<title>業務ロボット</title>
-
-<!-- Add to homescreen for Chrome on Android -->
-<meta name="mobile-web-app-capable" content="yes">
-<link rel="icon" sizes="192x192" href="images/android-desktop.png">
-
-<!-- Add to homescreen for Safari on iOS -->
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black">
-<meta name="apple-mobile-web-app-title" content="Airtel WVA Bot">
-<link rel="apple-touch-icon-precomposed"
-	href="static/images/ios-desktop.png">
-
-<!-- Tile icon for Win8 (144x144 + tile color) -->
-<meta name="msapplication-TileImage"
-	content="images/touch/ms-touch-icon-144x144-precomposed.png">
-<meta name="msapplication-TileColor" content="#3372DF">
-
-<link rel="shortcut icon" href="./static/images/favicon.png">
-
-<link rel="stylesheet"
-	href="https://fonts.googleapis.com/icon?family=Material+Icons">
-<!-- 
-<link rel="stylesheet"
-	href="https://code.getmdl.io/1.2.1/material.red-orange.min.css" />
-	-->
-<link rel="stylesheet" href="./static/stylesheets/index.css" />
+<meta content="width=device-width,initial-scale=1,minimal-ui" name="viewport">
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Roboto:400,500,700,400italic|Material+Icons">
+<link rel="stylesheet" href="https://unpkg.com/vue-material/dist/vue-material.min.css">
+<link rel="stylesheet" href="https://unpkg.com/vue-material/dist/theme/default.css">
 </head>
-<body style='overflow-x: hidden;'>
-	<div id="root">
-		<div id="login" class="card-body p-3 text-center">
-			<div style="">登録：</div>
-			<div style="" class="mb-4">
-				<input type="text" placeholder="Your Id" class="signup_item_input">
-			</div>
-			<div style="" class="mb-4">
-				<input type="password" placeholder="Password" class="signup_item_input">
-			</div>
-			<div class="mb-4">
-				<button type="submit" class="btn btn-default btn-primary">Login</button>
-			</div>
+<body>
+	<div id="app">
+		<div class="centered-container">
+			<md-content class="md-elevation-3">
+				<div class="title">
+					<img src="./static/img/help.png">
+					<div class="md-title">USER LOGIN</div>
+					<div class="md-body-1">More than a chatbot @Watson Assistant</div>
+				</div>
+				<div class="form" >
+					<md-field> <label>Your Id</label> 
+						<md-input name="loginusername" v-model="login.loginusername" autofocus v-validate="'required'">
+						<span>{{ errors.first('loginusername') }}</span></md-input>
+					</md-field>
+					
+					<md-field> <label>Password</label>
+						<md-input v-model="login.loginpassword" type="password"></md-input>
+					</md-field>
+				</div>
+
+				<div class="actions">
+					<md-button class="md-raised md-primary" @click="doLogin">Log in</md-button>
+				</div>
+	
+				<div class="loading-overlay" v-if="loading">
+					<md-progress-spinner md-mode="indeterminate" :md-stroke="2"></md-progress-spinner>
+				</div>
+			</md-content>
+		 <!-- <input v-validate="'required|email'" name="email" type="text">
+		 <span>{{ errors.first('email') }}</span>
+		 https://baianat.github.io/vee-validate/guide/getting-started.html#basic-example -->
+            
 		</div>
 	</div>
-	<p>
-		<audio id="audio"></audio>
-	</p>
-	<script defer src="https://code.getmdl.io/1.2.1/material.min.js"></script>
-	<script type="text/javascript"
-		src="./static/scripts/jquery-3.2.1.min.js"></script>
-	<script type="text/javascript" src="./static/scripts/script.js"></script>
-	<script type="text/javascript" src="./static/scripts/recorder.js"></script>
-	<script type="text/javascript" src="./static/scripts/recordWorker.js"></script>
 
+	<script src="https://unpkg.com/vue"></script>
+	<script src="https://unpkg.com/vue-resource"></script>
+	<script src="https://unpkg.com/vue-material"></script>
+	<script src="https://unpkg.com/vee-validate@latest"></script>
+	<script>
+      Vue.use(VueMaterial.default);
+      Vue.use(VeeValidate);
+      new Vue({
+        el: '#app',
+      	  data() {
+    	    return {
+    	      loading: false,
+    	      login: {
+    	    	loginusername: "",
+    	        loginpassword: "",
+    	        rememberme: false
+    	      },
+    	      url:'/login',
+    	      userToken: ''
+    	    };
+    	  },
+    	  methods: {
+    		  doLogin() {
+    			  let _this = this;
+    			  _this.loading = true;
+    			  
+        	      //setTimeout(() => {
+        	      //  this.loading = false;
+        	      //}, 5000);
+    			  if (_this.login.loginusername !== '' && _this.login.loginpassword !== '') {
+    				 _this.$http.get(_this.url, {
+    					 params: {
+    						 username:_this.login.loginusername,
+    						 password:_this.login.loginpassword,
+    						 rememberme:_this.login.rememberme
+    					 }
+    				 }).then((rsp) => {
+    					//  this.$set('items', response.data.data.data);
+                        //  this.$set('pagination', response.data.pagination);
+    					// get rsp token
+    					 console.log(rsp.data);
+    					 // _this.userToken = 'Bearer ' + res.data.data.body.token;
+    					 // push store token
+    					 // key:Authorization value:_this.userToken
+    					 window.location.href = 'chatbot'
+    					 // console.log(rsp);
+    		         }).catch(error => {
+	       				  _this.loading = false;
+	    				  window.location.href = '';
+	    				  alert('login feild');
+    		          	  console.log(error);
+    		         });
+    			  } else {
+    				  // if ()
+    					  
+    				  // alert('plase input your user name.');
+    				  _this.loading = false;
+    				  window.location.href = '';
+    				  // console.log('plase input your user name.');
+    			 }
+    	     }
+    	  }
+      });
+    </script>
+	<style lang="scss">
+	.centered-container {
+	  display: flex;
+	  align-items: center;
+	  justify-content: center;
+	  position: relative;
+	  height: 100vh;
+	}
+	.title {
+	    text-align: center;
+	    margin-bottom: 30px;
+	    img {
+	      margin-bottom: 16px;
+	      max-width: 80px;
+	    }
+	  }
+	  .actions {
+	    .md-button {
+	      margin: 0;
+	    };
+	    text-align: center;
+	  }
+	  .form {
+	    margin-bottom: 30px;
+	  }
+	  .md-content {
+	    z-index: 1;
+	    padding: 40px;
+	    width: 100%;
+	    max-width: 400px;
+	    position: relative;
+	  }
+	  .loading-overlay {
+	    z-index: 10;
+	    top: 0;
+	    left: 0;
+	    right: 0;
+	    position: absolute;
+	    width: 100%;
+	    height: 100%;
+	    background: rgba(255, 255, 255, 0.9);
+	    display: flex;
+	    align-items: center;
+	    justify-content: center;
+	  }
+	</style>
 </body>
-
 </html>
+
