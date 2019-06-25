@@ -39,7 +39,7 @@ from flask import make_response
 import ibm_boto3
 from ibm_botocore.client import Config, ClientError
 from unittest import case
-from auth import do_auth
+#from auth import do_auth
 from txaio._unframework import reject
 
 app = Flask(__name__)
