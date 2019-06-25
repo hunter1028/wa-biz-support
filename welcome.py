@@ -142,13 +142,9 @@ cos = ibm_boto3.resource("s3",
 
 @app.route('/')
 def Welcome():
-<<<<<<< HEAD
 #     return app.send_static_file('login.html')
-    return app.send_static_file('index.html')
-=======
     return app.send_static_file('login2.html')
 #     return app.send_static_file('index.html')
->>>>>>> refs/remotes/origin/dev-2
 
 @app.route('/api/conversation', methods=['POST', 'GET'])
 def getConvResponse():
