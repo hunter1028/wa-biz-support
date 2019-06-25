@@ -16,7 +16,7 @@
 import json
 import os
 from dotenv import load_dotenv
-from flask import Flask, Response
+from flask import Flask, Response,redirect,url_for
 from flask import jsonify
 from flask import request
 from flask_socketio import SocketIO
@@ -28,10 +28,13 @@ from ibm_watson import DiscoveryV1
 from telnetlib import theNULL
 from ibm_watson import LanguageTranslatorV3
 from _ast import If
+
 from flask import make_response
 import ibm_boto3
 from ibm_botocore.client import Config, ClientError
 from unittest import case
+from auth import do_auth
+from txaio._unframework import reject
 
 app = Flask(__name__)
 socketio = SocketIO(app)
@@ -139,9 +142,13 @@ cos = ibm_boto3.resource("s3",
 
 @app.route('/')
 def Welcome():
+<<<<<<< HEAD
 #     return app.send_static_file('login.html')
     return app.send_static_file('index.html')
-
+=======
+    return app.send_static_file('login2.html')
+#     return app.send_static_file('index.html')
+>>>>>>> refs/remotes/origin/dev-2
 
 @app.route('/api/conversation', methods=['POST', 'GET'])
 def getConvResponse():
@@ -364,6 +371,23 @@ def getTranslatorToEnlish(text):
     translation = language_translator.translate(text=text,model_id='ja-en').get_result()
     return translation
 
+@app.route('/login', methods=['POST', 'GET'])
+def login():
+    user_name = request.args.get('username', None)
+    password =  request.args.get('password', None)
+    if do_auth(user_name, password):
+        # 検証成功
+        return app.send_static_file('index.html')
+    else:
+        return redirect('/')
+    # return app.send_static_file('index.html')
+    # return redirect('/index')
+
+
+@app.route('/chatbot', methods=['POST', 'GET'])
+def index():
+    return app.send_static_file('index.html')
+#     return app.send_static_file('index.html')
 
 @app.route('/api/discoveryChartOne', methods=['POST', 'GET'])
 def getDiscoveryChartOne():
@@ -430,4 +454,4 @@ def download_file(id=None):
     
 port = os.getenv('PORT', '5000')
 if __name__ == "__main__":
-    socketio.run(app, host='0.0.0.0', port=int(port))
+    socketio.run(app, host='0.0.0.0', port=int(port), debug=True)
