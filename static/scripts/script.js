@@ -5,15 +5,39 @@ let discoveryJson;
 let audioText = '';
 
 function openFile(id){
+//	   var win=window.open('about:blank');
+//	   $.post("/api/docs", 
+//			   { 'id': id,}, 
+//			    function (data) {
+////			        alert(data);
+//			        
+//			        with(win.document)
+//			        {
+//			            open();
+//			            write(data);
+//			            close();
+//			        }
+//			    });
+//			 
+			 
+		 
  	var form = document.createElement("form");
 	form.setAttribute("method", "post");
 	form.setAttribute("action", "/api/docs");
 	form.setAttribute("target", "_blank");
-	var hiddenField = document.createElement("input");      
-	hiddenField.setAttribute("id", id);
 	
-	document.body.appendChild(form);               
+	var hiddenField = document.createElement("input");  
+	
+	hiddenField.setAttribute("name", "id");
+	hiddenField.setAttribute("type", "hidden");
+	hiddenField.setAttribute("value", id);
+	
+	form.appendChild(hiddenField);
+	document.body.appendChild(form);
+	
 	form.submit();
+	document.body.removeChild(form);
+	
 }
 function displayMsgDiv(content, type, who, discoverySend="noSend") {
   const time = new Date();
@@ -103,7 +127,7 @@ function displayMsgDiv(content, type, who, discoverySend="noSend") {
   $('a').each(function(){
 	  var a_id = $(this).attr('id');
 	  if(a_id === 'm001'||a_id === 'm002'||a_id === 'm003'||a_id === 'm004'||a_id == 'k001'){
-		  $(this).attr('href','javascript:openFile(a_id)');
+		  $(this).attr('href','javascript:openFile(\''+a_id+'\')');
 		  $(this).attr('target','');
 	  }
 	  
