@@ -39,7 +39,6 @@ from flask import make_response
 import ibm_boto3
 from ibm_botocore.client import Config, ClientError
 from unittest import case
-from auth import do_auth
 
 app = Flask(__name__)
 socketio = SocketIO(app)
