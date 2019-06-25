@@ -4,7 +4,17 @@ let context;
 let discoveryJson;
 let audioText = '';
 
-
+function openFile(id){
+ 	var form = document.createElement("form");
+	form.setAttribute("method", "post");
+	form.setAttribute("action", "/api/docs");
+	form.setAttribute("target", "_blank");
+	var hiddenField = document.createElement("input");      
+	hiddenField.setAttribute("id", id);
+	
+	document.body.appendChild(form);               
+	form.submit();
+}
 function displayMsgDiv(content, type, who, discoverySend="noSend") {
   const time = new Date();
   let hours = time.getHours();
@@ -66,8 +76,9 @@ function displayMsgDiv(content, type, who, discoverySend="noSend") {
   if (who == 'bot') {
 	  if (discoverySend === 'send') {
 		  msgHtml = "";
-//		  var text = '{"data": ["0618","0619","0620","0621","0622","0623"],"series": [5,20,36,10,10,20]}';
-//		  var obj = JSON.parse(text);
+// var text = '{"data": ["0618","0619","0620","0621","0622","0623"],"series":
+// [5,20,36,10,10,20]}';
+// var obj = JSON.parse(text);
 		  var discoveryJsonParam = encodeURIComponent(JSON.stringify(discoveryJson));
 		  msgHtml += "<div class='jss33'><div class='jss32'><object id='contentarea' standby='loading data, please wait...' title='loading data, please wait...' width='100%' height='100%' type='text/html' data='./static/dashbord.html?discoveryParam="+ discoveryJsonParam +"&param2=bb'></object></div></div>";
 	  } else {
@@ -88,11 +99,23 @@ function displayMsgDiv(content, type, who, discoverySend="noSend") {
     $('#q').removeAttr('disabled');
     $('#p2').fadeTo(500, 0);
   }
+  
+  $('a').each(function(){
+	  var a_id = $(this).attr('id');
+	  if(a_id === 'm001'||a_id === 'm002'||a_id === 'm003'||a_id === 'm004'||a_id == 'k001'){
+		  $(this).attr('href','javascript:openFile(a_id)');
+		  $(this).attr('target','');
+	  }
+	  
+	    
+	});
 }
+
+
 
 $(document).ready(function() {
 // $('#q').attr('disabled', 'disabled');
-　　//  $("#includedContent").load("./dashbord.html");
+　　// $("#includedContent").load("./dashbord.html");
   $('#p2').fadeTo(500, 1);
   $('#h').val('0');
 
@@ -111,9 +134,9 @@ $(document).ready(function() {
     	  displayMsgDiv(res.results.reponseContent,　res.results.responseType,  'bot'); 
     	 
       }
-      play(audioText);
+// play(audioText);
       audioText='';
-//      play(res.results.reponseContent);
+// play(res.results.reponseContent);
     })
     .fail(function(jqXHR, e) {
       console.log('Error: ' + jqXHR.responseText);
@@ -154,8 +177,8 @@ function sendMessage(message){
        	  displayMsgDiv(res.results.reponseContent,　res.results.responseType,  'bot'); 
        
          }
-//   	  	play(res.results.reponseContent);
-    	  play(audioText);
+// play(res.results.reponseContent);
+// play(audioText);
     	  audioText='';
     	if (res.results.sendToDiscovery === 'send') {
     		discoverySend = res.results.sendToDiscovery;
@@ -186,9 +209,9 @@ function callConversation(res) {
   })
     .done(function(res, status) {
       conversationContext = res.results.context;
-//      play(res.results.responseText);
+// play(res.results.responseText);
       displayMsgDiv(res.results.reponseContent, res.results.responseType,'bot', null, null);
-      play(audioText);
+// play(audioText);
       audioText='';
     })
     .fail(function(jqXHR, e) {
@@ -221,16 +244,16 @@ function play(inputText) {
              
              
              
-//    context.decodeAudioData(
-//      request.response,
-//      function(buffer) {
-//        buf = buffer;
-//        play();
-//      },
-//      function(error) {
-//        console.error('decodeAudioData error', error);
-//      }
-//    );
+// context.decodeAudioData(
+// request.response,
+// function(buffer) {
+// buf = buffer;
+// play();
+// },
+// function(error) {
+// console.error('decodeAudioData error', error);
+// }
+// );
   };
   request.send(params);
 
@@ -319,7 +342,8 @@ window.onload = function init() {
 
     	 
     console.log('Audio context set up.');
-    //console.log('navigator.getUserMedia ' + (navigator.getUserMedia ? 'available.' : 'not present!'));
+    // console.log('navigator.getUserMedia ' + (navigator.getUserMedia ?
+	// 'available.' : 'not present!'));
   } catch (e) {
     alert('No web audio support in this browser!');
   }

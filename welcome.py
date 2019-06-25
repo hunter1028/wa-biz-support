@@ -28,13 +28,19 @@ from ibm_watson import DiscoveryV1
 from telnetlib import theNULL
 from ibm_watson import LanguageTranslatorV3
 from _ast import If
+from flask import make_response
+import ibm_boto3
+from ibm_botocore.client import Config, ClientError
+from unittest import case
 
 app = Flask(__name__)
 socketio = SocketIO(app)
 CORS(app)
 
 language_identify = 'ja'
-  
+
+
+
 if 'VCAP_SERVICES' in os.environ:
     vcap = json.loads(os.getenv('VCAP_SERVICES'))
     if 'conversation' in vcap:
@@ -115,10 +121,26 @@ else:
     discovery_collection_id = os.environ.get('DISCOVERY_COLLECTION_ID')
     discovery_environment_id = os.environ.get('DISCOVERY_ENVIRONMENT_ID')
 
+# Constants for IBM COS values
+COS_ENDPOINT = "https://s3.ams03.cloud-object-storage.appdomain.cloud" # Current list avaiable at https://control.cloud-object-storage.cloud.ibm.com/v2/endpoints
+COS_API_KEY_ID = "rr7Gb-oSjjL-OgSrIkdRRQBVSWWuSPvhhhjtM0_pTVG-" # eg "W00YiRnLW4a3fTjMB-oiB-2ySfTrFBIQQWanc--P3byk"
+COS_AUTH_ENDPOINT = "https://iam.cloud.ibm.com/identity/token"
+COS_RESOURCE_CRN = "crn:v1:bluemix:public:cloud-object-storage:global:a/82d7c22519df42d08f81d32010fe9348:32fbf12f-285f-4e22-8b9c-3aedc916405a::" # eg "crn:v1:bluemix:public:cloud-object-storage:global:a/3bf0d9003abfb5d29761c3e97696b71c:d6f04d83-6c4f-4a62-a165-696756d63903::"
+COS_BUCKET_LOCATION="ams03-standard"
+
+# Create resource
+cos = ibm_boto3.resource("s3",
+    ibm_api_key_id=COS_API_KEY_ID,
+    ibm_service_instance_id=COS_RESOURCE_CRN,
+    ibm_auth_endpoint=COS_AUTH_ENDPOINT,
+    config=Config(signature_version="oauth"),
+    endpoint_url=COS_ENDPOINT
+)
+
 @app.route('/')
 def Welcome():
-    return app.send_static_file('login.html')
-#     return app.send_static_file('index.html')
+#     return app.send_static_file('login.html')
+    return app.send_static_file('index.html')
 
 
 @app.route('/api/conversation', methods=['POST', 'GET'])
@@ -369,6 +391,42 @@ def getDiscoveryChartOne():
 #     response['Access-Control-Max-Age'] = '1000' 
 #     response['Access-Control-Allow-Headers'] = '*'
     return jsonify(results=responseDemo)
+
+@app.route('/api/docs', methods=['POST', 'GET'])
+def download_file(id=None):
+    bucket = 'pdf-01'
+    
+    a_id = request.form.get('id')
+    
+    if a_id == 'm001':
+        file_name = "ブロー機保守.pdf"
+    elif a_id == 'm002':
+         file_name = "チャンバー.pdf"
+    elif a_id == 'm003':
+        file_name = "シンクロ.pdf"
+    elif a_id == 'm004':
+         file_name = "フィラー.pdf"
+    elif a_id == 'k001':
+         file_name = "【ﾌｨﾗｰ】点検基準書STⅡ改定.xls"
+         
+    # Cosに格納したファイルを読み込む
+    try:
+         file = cos.Object(bucket_name, file_name).get()
+         
+    except Exception as e:
+        print("Unable to retrieve file contents: {0}".format(e))
+    
+    response = make_response(f["Body"].read())
+    
+    if file_name[-3:]=='pdf' :
+        response.headers['Content-Type'] = 'application/pdf'
+    else:
+        response.headers['Content-Type'] = 'application/vnd.ms-excel'
+
+    response.headers['Content-Disposition'] = 'inline; filename=%s' % file_name
+    
+    return response
+    
     
 port = os.getenv('PORT', '5000')
 if __name__ == "__main__":
