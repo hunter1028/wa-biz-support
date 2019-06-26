@@ -126,7 +126,7 @@ function displayMsgDiv(content, type, who, discoverySend="noSend") {
   
   $('a').each(function(){
 	  var a_id = $(this).attr('id');
-	  if(a_id === 'm001'||a_id === 'm002'||a_id === 'm003'||a_id === 'm004'||a_id == 'k001'){
+	  if(a_id === 'm001'||a_id === 'm002'||a_id === 'm003'||a_id === 'm004'||a_id == 'k004'){
 		  $(this).attr('href','javascript:openFile(\''+a_id+'\')');
 		  $(this).attr('target','');
 	  }

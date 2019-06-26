@@ -460,7 +460,7 @@ def download_file(id=None):
         file_name = "シンクロ保守.pdf"
     elif a_id == 'm004':
          file_name = "フィラー保守.pdf"
-    elif a_id == 'k001':
+    elif a_id == 'k004':
          file_name = "【ﾌｨﾗｰ】点検基準書STⅡ改定.xls"
          
     response = None
