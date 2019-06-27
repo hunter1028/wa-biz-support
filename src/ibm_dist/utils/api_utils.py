@@ -1,23 +1,16 @@
-#!/usr/local/bin/python2.7
-# encoding: utf-8
+#-*- coding: utf-8 -*-
 '''
-ibm_dist.api.api_utils -- shortdesc
+ibm_dist.utils.api_utils -- watson assistant biz support
 
-ibm_dist.api.api_utils is a description
+@author:     IBM
+@copyright:  2019 IBM distribution. All rights reserved.
+@version: 1.0
 
-It defines classes_and_methods
-
-@author:     user_name
-
-@copyright:  2019 organization_name. All rights reserved.
-
-@license:    license
-
-@contact:    user_email
-@deffield    updated: Updated
+Created on 2019/06/26
 '''
+
 from ibm_watson import LanguageTranslatorV3
-from ibm_dist.api import tranlatorUser, tranlatorPassword, tranlatorIAMKey, tranlatorUrl
+from ibm_dist import tranlatorUser, tranlatorPassword, tranlatorIAMKey, tranlatorUrl
 
 def getTranslatorText(convText):
     global language_identify

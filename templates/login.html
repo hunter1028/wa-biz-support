@@ -15,66 +15,67 @@
 					<div class="md-title">USER LOGIN</div>
 					<div class="md-body-1">More than a chatbot @Watson Assistant</div>
 				</div>
+				
 				<div class="form" >
 					<md-field :class="messageClassUserName"><label>Your Id</label> 
 						<md-input @mouseover="clearErr()" name="loginusername" v-model="login.loginusername" autofocus required></md-input>
-						<span class="md-error">Username is incorrect or does not exist.</span>
+						<span class="md-error">{[userNameErr.verificationErrMassage]}</span>
 					</md-field>
-					
 					<md-field :class="messageClassPassword"> <label>Password</label>
 						<md-input v-model="login.loginpassword" type="password" required></md-input>
-						<span class="md-error">Password is incorrect or does not exist.</span>
+						<span class="md-error">{[passwordErr.verificationErrMassage]}</span>
 					</md-field>
 				</div>
-
+				
 				<div class="actions">
 					<md-button class="md-raised md-primary" @click="doLogin">Log in</md-button>
 				</div>
-	
+				
 				<div class="loading-overlay" v-if="loading">
 					<md-progress-spinner md-mode="indeterminate" :md-stroke="2"></md-progress-spinner>
 				</div>
 			</md-content>
+
 		</div>
 	</div>
 
 	<script src="https://unpkg.com/vue"></script>
 	<script src="https://unpkg.com/vue-resource"></script>
-	<script src="https://unpkg.com/vue-material"></script>
+	<!--<script src="https://unpkg.com/vue-material"></script>-->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/vue-material/1.0.0-beta-11/vue-material.min.js"></script>
 	<!-- <script src="https://unpkg.com/vee-validate@latest"></script> -->
 	<script>
-      Vue.use(VueMaterial.default);
-      // Vue.use(VeeValidate);
-      
-      // import { validationMixin } from 'vuelidate'
-      // import {
-      //   required,
-      //   email,
-      //   minLength,
-      //   maxLength
-      // } from 'vuelidate/lib/validators'
-      
-      new Vue({
-        el: '#app',
-      	  data() {
-    	    return {
-    	      loading: false,
-    	      login: {
-    	    	loginusername: "",
-    	        loginpassword: "",
-    	        rememberme: false
-    	      },
-    	      url:'/login',
-    	      userToken: '',
-    	      hasMessagesUm:false,
-    	      hasMessagesPs:false
-    	    };
-    	  },
+		Vue.use(VueMaterial.default);
+		// Vue.use(VeeValidate);
+
+		new Vue({
+	        el: '#app',
+	        delimiters: ['{[', ']}'],
+	      	data() {
+				return {
+					loading: false,
+					login: {
+		    	    	loginusername: "",
+		    	        loginpassword: "",
+		    	        rememberme: false
+	    	      	},
+	    	      	url:'/login',
+	    	      	userToken: '',
+	    	      	userNameErr: {
+		    	    	hasMessages: false,
+		    	    	verificationErrMassage: ''
+					},
+					passwordErr: {
+						hasMessages:false,
+						verificationErrMassage:''
+	    	      }
+				};
+			},
     	  methods: {
     		  doLogin() {
     			  let _this = this;
     			  _this.loading = true;
-    			  
+    			  clearErr(_this);
         	      //setTimeout(() => {
         	      //  this.loading = false;
         	      //}, 5000);
@@ -86,49 +87,67 @@
     						 rememberme:_this.login.rememberme
     					 }
     				 }).then((rsp) => {
-    					//  this.$set('items', response.data.data.data);
-                        //  this.$set('pagination', response.data.pagination);
-    					// get rsp token
     					 console.log(rsp.data);
-    					 // _this.userToken = 'Bearer ' + res.data.data.body.token;
-    					 // push store token
-    					 // key:Authorization value:_this.userToken
-    					 window.location.href = 'chatbot'
-    					 // console.log(rsp);
+
+    					if (rsp.status == 200) {
+    						window.location.href = 'chatbot'
+    	    			// verification failed 
+    					} else if (rsp.status == 203) {
+	    				  setErrUmAndPw(_this, rsp.data.MASSAGE);
+    					} else {
+    						setErrUmAndPw(_this, 'login field. Please confirm the username and password.');
+    					}
+    					
     		         }).catch(error => {
-	    				  _this.hasMessagesUm = true;
-	    				  _this.hasMessagesPs = true;
-	       				  _this.loading = false;
+	    				  setErrUmAndPw(_this, 'login field. ERROR : ' + error.statusText);
     		          	  console.log(error);
     		         });
     			  } else {
-    				  // if ()
-    				  _this.hasMessagesUm = true;
-    				  _this.hasMessagesPs = true;
-    				  console.log(_this.hasMessagesUm);
-    				  // alert('plase input your user name.');
+    				  // required
+    				  if (_this.login.loginusername == '') {
+    					  _this.userNameErr.hasMessages = true;
+    					  _this.userNameErr.verificationErrMassage = 'Username is incorrect or does not exist.';
+    				  }
+    				  if (_this.login.loginpassword == '') {
+    					  _this.passwordErr.hasMessages = true;
+    					  _this.passwordErr.verificationErrMassage = 'Password is incorrect or does not exist.';
+    				  }
     				  _this.loading = false;
-    				  // window.location.href = '';
-    				  // console.log('plase input your user name.');
-    			 }
+				  }
     	     },
-    	     clearErr(item) {
-    	    	 
+    	     clearErr() {
+    	    	 //_this.userNameErr.hasMessages = false;
+    	    	 //_this.userNameErr.verificationErrMassage = '';
     	     }
     	  },
     	  computed: {
     		  messageClassUserName () {
     	          return {
-    	            'md-invalid': this.hasMessagesUm
+    	            'md-invalid': this.userNameErr.hasMessages
     	          }
     	        },
     	        messageClassPassword () {
       	          return {
-      	            'md-invalid': this.hasMessagesPs
+      	            'md-invalid': this.passwordErr.hasMessages
       	          }
-      	        }
+				} 
     	  }
+    	 
       });
+	function setErrUmAndPw(item, msg) {
+		item.userNameErr.hasMessages = true;
+		item.userNameErr.verificationErrMassage = msg;
+		item.passwordErr.hasMessages = true;
+		item.passwordErr.verificationErrMassage = msg;
+		item.loading = false;
+	};
+	function clearErr(item) {
+		item.userNameErr.hasMessages = false;
+		item.userNameErr.verificationErrMassage = '';
+		item.passwordErr.hasMessages = false;
+		item.passwordErr.verificationErrMassage = '';
+	}
+     
     </script>
 	<style lang="scss">
 	.centered-container {
