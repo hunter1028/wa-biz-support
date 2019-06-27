@@ -158,7 +158,7 @@ $(document).ready(function() {
     	  displayMsgDiv(res.results.reponseContent,　res.results.responseType,  'bot'); 
     	 
       }
-// play(audioText);
+ play(audioText);
       audioText='';
 // play(res.results.reponseContent);
     })
@@ -202,7 +202,7 @@ function sendMessage(message){
        
          }
 // play(res.results.reponseContent);
-// play(audioText);
+ play(audioText);
     	  audioText='';
     	if (res.results.sendToDiscovery === 'send') {
     		discoverySend = res.results.sendToDiscovery;
@@ -235,7 +235,7 @@ function callConversation(res) {
       conversationContext = res.results.context;
 // play(res.results.responseText);
       displayMsgDiv(res.results.reponseContent, res.results.responseType,'bot', null, null);
-// play(audioText);
+ play(audioText);
       audioText='';
     })
     .fail(function(jqXHR, e) {

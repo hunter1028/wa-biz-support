@@ -1,4 +1,14 @@
-# -*- coding: utf-8 -*-
+#-*- coding: utf-8 -*-
+'''
+ibm_dist.utils.ser_authorization -- watson assistant biz support
+
+@author:     IBM
+@copyright:  2019 IBM distribution. All rights reserved.
+@version: 1.0
+
+Created on 2019/06/26
+'''
+
 from werkzeug.security import generate_password_hash
 from werkzeug.security import check_password_hash
 from flask_login import UserMixin
