@@ -8,12 +8,11 @@ ibm_dist -- watson assistant biz support
 
 Created on 2019/06/26
 '''
-# from flask import Flask
-# app = Flask(__name__)
-
-from flask_login import LoginManager, current_user
+from flask import Flask
+app = Flask(__name__)
 
 # use login manager to manage session
+from flask_login import LoginManager, current_user
 login_manager = LoginManager()
 login_manager.session_protection = 'strong'
 login_manager.login_view = 'index'
@@ -23,14 +22,13 @@ from ibm_dist.utils.user_authorization import User
 def load_user(user_id):
     return User.get(user_id)
 
+# READ ENV
 import json
 import os
 from dotenv import load_dotenv
 import ibm_boto3
 from ibm_botocore.client import Config, ClientError
- 
-language_identify = 'ja'
- 
+
 if 'VCAP_SERVICES' in os.environ:
     vcap = json.loads(os.getenv('VCAP_SERVICES'))
     if 'conversation' in vcap:
@@ -128,3 +126,5 @@ cos = ibm_boto3.resource("s3",
     config=Config(signature_version="oauth"),
     endpoint_url=COS_ENDPOINT
 )
+ 
+language_identify = 'ja'
