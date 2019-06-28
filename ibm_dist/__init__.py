@@ -81,9 +81,10 @@ if 'VCAP_SERVICES' in os.environ:
  
 else:
     print('Found local VCAP_SERVICES')
-#    print(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir, os.path.pardir, ".env")))
+#     print(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir, os.path.pardir, ".env")))
 #     load_dotenv(os.path.join(os.path.dirname(__file__), ".env"))
-    load_dotenv(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir, os.path.pardir, ".env")))
+#     print(os.path.abspath(os.path.join(os.path.dirname(__file__), "../.env")))
+    load_dotenv(os.path.abspath(os.path.join(os.path.dirname(__file__), "../.env")))
     assistantUsername = os.environ.get('ASSISTANT_USERNAME')
     assistantPassword = os.environ.get('ASSISTANT_PASSWORD')
     assistantIAMKey = os.environ.get('ASSISTANT_IAM_APIKEY')

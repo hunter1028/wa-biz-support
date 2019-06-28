@@ -45,7 +45,7 @@ class User(UserMixin):
         password_hash = self.get_password_hash()
         if password_hash is None:
             return False
-        return check_password_hash(self.password_hash, password)
+        return check_password_hash(password_hash, password)
 
     def get_password_hash(self):
         """try to get password hash from file.

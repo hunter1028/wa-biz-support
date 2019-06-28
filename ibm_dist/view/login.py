@@ -32,7 +32,7 @@ def login():
         
     user = User(user_name)
     
-    if do_auth(user_name, password):
+    if user.verify_password(password):
         login_user(user, remember=remember_me)
         return render_template('index.html')
     else:
@@ -56,6 +56,5 @@ def chatbot():
 def logout():
     logout_user()
     return redirect(request.referrer or url_for('/'))
-
 
 
