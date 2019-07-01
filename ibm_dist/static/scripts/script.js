@@ -2,7 +2,43 @@ let conversationContext = '';
 let recorder;
 let context;
 let discoveryJson;
+let audioText = '';
 
+function openFile(id){
+//	   var win=window.open('about:blank');
+//	   $.post("/api/docs", 
+//			   { 'id': id,}, 
+//			    function (data) {
+////			        alert(data);
+//			        
+//			        with(win.document)
+//			        {
+//			            open();
+//			            write(data);
+//			            close();
+//			        }
+//			    });
+//			 
+			 
+		 
+ 	var form = document.createElement("form");
+	form.setAttribute("method", "post");
+	form.setAttribute("action", "/api/docs");
+	form.setAttribute("target", "_blank");
+	
+	var hiddenField = document.createElement("input");  
+	
+	hiddenField.setAttribute("name", "id");
+	hiddenField.setAttribute("type", "hidden");
+	hiddenField.setAttribute("value", id);
+	
+	form.appendChild(hiddenField);
+	document.body.appendChild(form);
+	
+	form.submit();
+	document.body.removeChild(form);
+	
+}
 function displayMsgDiv(content, type, who, discoverySend="noSend") {
   const time = new Date();
   let hours = time.getHours();
@@ -26,6 +62,7 @@ function displayMsgDiv(content, type, who, discoverySend="noSend") {
   if(typeof content == 'string'){
 	  if (who == 'bot') {
 		  msgHtml += "<div class='jss24'>"; 
+		  audioText +=content;
 	  }
 	  content=content.replace(/^[/*・]/,"");
 	  display_v = content.replace(/(\r\n)|(\n)/g,'<br>');
@@ -36,12 +73,16 @@ function displayMsgDiv(content, type, who, discoverySend="noSend") {
   }else if (typeof content == 'object') {
 	  if(type == 'text'){
 		  msgHtml += "<div class='jss24'>";
+		  audioText+=content[0]
+		
 		  display_v =content[0].replace(/(\r\n)|(\n)/g,'<br>');
 		  msgHtml += display_v;
 		  msgHtml += "</div>";
 	  }else{
 		  msgHtml += "<div class='jss25'>";
 		  msgHtml += content.title;
+		
+		  audioText+=content.title
 		  msgHtml += "</div>";
 		  
 		 
@@ -54,13 +95,14 @@ function displayMsgDiv(content, type, who, discoverySend="noSend") {
 		  } 
 	  }
   }
-
+  
 // msgHtml += "</div><div class='" + who + "-line'>" + strTime + '</div></div>';
   if (who == 'bot') {
 	  if (discoverySend === 'send') {
 		  msgHtml = "";
-//		  var text = '{"data": ["0618","0619","0620","0621","0622","0623"],"series": [5,20,36,10,10,20]}';
-//		  var obj = JSON.parse(text);
+// var text = '{"data": ["0618","0619","0620","0621","0622","0623"],"series":
+// [5,20,36,10,10,20]}';
+// var obj = JSON.parse(text);
 		  var discoveryJsonParam = encodeURIComponent(JSON.stringify(discoveryJson));
 		  msgHtml += "<div class='jss33'><div class='jss32'><object id='contentarea' standby='loading data, please wait...' title='loading data, please wait...' width='100%' height='100%' type='text/html' data='./static/dashbord.html?discoveryParam="+ discoveryJsonParam +"&param2=bb'></object></div></div>";
 	  } else {
@@ -81,11 +123,23 @@ function displayMsgDiv(content, type, who, discoverySend="noSend") {
     $('#q').removeAttr('disabled');
     $('#p2').fadeTo(500, 0);
   }
+  
+  $('a').each(function(){
+	  var a_id = $(this).attr('id');
+	  if(a_id === 'm001'||a_id === 'm002'||a_id === 'm003'||a_id === 'm004'||a_id == 'k004'){
+		  $(this).attr('href','javascript:openFile(\''+a_id+'\')');
+		  $(this).attr('target','');
+	  }
+	  
+	    
+	});
 }
+
+
 
 $(document).ready(function() {
 // $('#q').attr('disabled', 'disabled');
-　　//  $("#includedContent").load("./dashbord.html");
+　　// $("#includedContent").load("./dashbord.html");
   $('#p2').fadeTo(500, 1);
   $('#h').val('0');
 
@@ -99,10 +153,14 @@ $(document).ready(function() {
       if (res.results.responseType2){
           displayMsgDiv(res.results.reponseContent,　res.results.responseType,  'bot');
           displayMsgDiv(res.results.reponseContent2,　res.results.responseType2,  'bot');
+         
       }else{
     	  displayMsgDiv(res.results.reponseContent,　res.results.responseType,  'bot'); 
+    	 
       }
-	// play(res.results.responseText);
+ play(audioText);
+      audioText='';
+// play(res.results.reponseContent);
     })
     .fail(function(jqXHR, e) {
       console.log('Error: ' + jqXHR.responseText);
@@ -135,13 +193,17 @@ function sendMessage(message){
     	context: JSON.stringify(conversationContext)
     }).done(function(res) {
     	conversationContext = res.results.context;
-    	// play(res.results.responseText);
+    	
     	 if (res.results.responseType2){
              displayMsgDiv(res.results.reponseContent,　res.results.responseType,  'bot');
              displayMsgDiv(res.results.reponseContent2,　res.results.responseType2,  'bot');
          }else{
        	  displayMsgDiv(res.results.reponseContent,　res.results.responseType,  'bot'); 
+       
          }
+// play(res.results.reponseContent);
+ play(audioText);
+    	  audioText='';
     	if (res.results.sendToDiscovery === 'send') {
     		discoverySend = res.results.sendToDiscovery;
     		sendToDiscovery();
@@ -156,7 +218,6 @@ function sendToDiscovery() {
 	    	// context: JSON.stringify(conversationContext)
 	    }).done(function(res) {
 	    	// conversationContext = res.results.context;
-	    	// play(res.results.responseText);
 	    	discoveryJson = res.results;
 	    	displayMsgDiv(res.results.reponseContent,res.results.responseType, 'bot', "send");
 		}).fail(function(jqXHR, e) {
@@ -172,8 +233,10 @@ function callConversation(res) {
   })
     .done(function(res, status) {
       conversationContext = res.results.context;
-//      play(res.results.responseText);
+// play(res.results.responseText);
       displayMsgDiv(res.results.reponseContent, res.results.responseType,'bot', null, null);
+ play(audioText);
+      audioText='';
     })
     .fail(function(jqXHR, e) {
       console.log('Error: ' + jqXHR.responseText);
@@ -192,21 +255,35 @@ function play(inputText) {
 
   // Decode asynchronously
   request.onload = function() {
-    context.decodeAudioData(
-      request.response,
-      function(buffer) {
-        buf = buffer;
-        play();
-      },
-      function(error) {
-        console.error('decodeAudioData error', error);
-      }
-    );
+	  
+	  context.decodeAudioData(
+			  request.response,
+              audioBuffer => {
+                  buf = audioBuffer;
+                  play();
+               }, 
+              error => 
+               console.error('decodeAudioData error')
+             );
+             
+             
+             
+// context.decodeAudioData(
+// request.response,
+// function(buffer) {
+// buf = buffer;
+// play();
+// },
+// function(error) {
+// console.error('decodeAudioData error', error);
+// }
+// );
   };
   request.send(params);
 
   // Play the loaded file
   function play() {
+		 
     // Create a source node from the buffer
     const source = context.createBufferSource();
     source.buffer = buf;
@@ -214,6 +291,7 @@ function play(inputText) {
     source.connect(context.destination);
     // Play immediately
     source.start(0);
+    
   }
 }
 
@@ -288,7 +366,8 @@ window.onload = function init() {
 
     	 
     console.log('Audio context set up.');
-    //console.log('navigator.getUserMedia ' + (navigator.getUserMedia ? 'available.' : 'not present!'));
+    // console.log('navigator.getUserMedia ' + (navigator.getUserMedia ?
+	// 'available.' : 'not present!'));
   } catch (e) {
     alert('No web audio support in this browser!');
   }
