@@ -17,7 +17,7 @@ applications:
 - path: .
   memory: 128M
   instances: 1
-  name: wa-biz-support-waff
+  name: biz-assis-m
   host: biz-assis-m
   command: python welcome.py
   disk_quota: 512M
