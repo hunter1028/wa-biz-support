@@ -17,7 +17,7 @@ applications:
 - path: .
   memory: 128M
   instances: 1
-  name: biz-assis-master
+  name: wa-biz-support
   command: python welcome.py
   disk_quota: 512M
   buildpack: https://github.com/cloudfoundry/python-buildpack.git
