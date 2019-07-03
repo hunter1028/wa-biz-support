@@ -73,12 +73,17 @@ if 'VCAP_SERVICES' in os.environ:
     if "ASSISTANT_IAM_APIKEY" in os.environ:
         assistantIAMKey = os.getenv('ASSISTANT_IAM_APIKEY')
          
-    discovery_version='2019-02-10'
-    discovery_iam_apikey='3UYwda1sKeY8067bhn1QMLqv8ZXhXUMci5GQGwqTwY_f'
-    discovery_url='https://gateway-tok.watsonplatform.net/discovery/api'
-    discovery_collection_id='5e7a4dba-7dd5-43bf-aae2-6ad71c53f211'
-    discovery_environment_id='b38640cb-c019-4e68-9e27-16841796ae92'
- 
+    # discovery_version='2019-02-10'
+    # discovery_iam_apikey='3UYwda1sKeY8067bhn1QMLqv8ZXhXUMci5GQGwqTwY_f'
+    # discovery_url='https://gateway-tok.watsonplatform.net/discovery/api'
+    # discovery_collection_id='5e7a4dba-7dd5-43bf-aae2-6ad71c53f211'
+    # discovery_environment_id='b38640cb-c019-4e68-9e27-16841796ae92'
+
+    discovery_version = '2019-07-02'
+    discovery_iam_apikey = 'oK7ydpzc9WyR6dLHWyPhtHcyLqJd-8FQWkU_xkFWnQa4'
+    discovery_url = 'https://gateway-tok.watsonplatform.net/discovery/api'
+    discovery_collection_id = '230d70e1-8ae7-4bca-9953-5d1720ee758c'
+    discovery_environment_id = 'cdcc86fa-1fd5-4445-9f2b-97f16cdc0571'
 else:
     print('Found local VCAP_SERVICES')
 #     print(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir, os.path.pardir, ".env")))
