@@ -18,7 +18,6 @@ applications:
   memory: 128M
   instances: 1
   name: wa-biz-support
-  host: wa-biz-support2
   command: python welcome.py
   disk_quota: 512M
   buildpack: https://github.com/cloudfoundry/python-buildpack.git
