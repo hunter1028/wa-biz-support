@@ -1,2 +1,5 @@
 eclipse.preferences.version=1
 encoding//demofile/welcome.py=utf-8
+encoding//ibm_dist/__init__.py=utf-8
+encoding//ibm_dist/api/conversation.py=utf-8
+encoding/welcome.py=utf-8
