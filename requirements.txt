@@ -6,5 +6,5 @@ flask-socketio==3.0.2
 Flask-Login==0.4.1
 Flask-API==1.1
 werkzeug==0.15.4
-pip==19.1.1
+pip==19.2
 ibm-cos-sdk==2.5.0
